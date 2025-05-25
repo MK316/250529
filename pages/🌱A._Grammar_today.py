@@ -49,13 +49,18 @@ st.markdown(f"### 🔹 관계대명사: **{target}**")
 st.info(data["desc"])
 
 st.markdown("**🔸 두 문장:**")
-st.markdown(f"- A: {data['A']}")
-st.image(data["imgA"], caption="A", width=200)
+col1, col2 = st.columns(2)
 
-st.markdown(f"- B: {data['B']}")
-st.image(data["imgB"], caption="B", width=200)
+with col1:
+    st.markdown(f"**A:** {data['A']}")
+    st.image(data["imgA"], caption="A", width=250)
+
+with col2:
+    st.markdown(f"**B:** {data['B']}")
+    st.image(data["imgB"], caption="B", width=250)
 
 st.markdown("**🔸 결합된 문장:**")
 st.success(f"{data['C']}")
 st.caption(data["K"])
-st.image(data["imgC"], caption="A + B", width=200)
+st.image(data["imgC"], caption="A + B", width=300)
+
