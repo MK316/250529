@@ -39,44 +39,29 @@ vocab_dict = {
 
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# ---------- Render Inline Buttons with JS ----------
-st.markdown("### 📘 Click a word")
+st.set_page_config(page_title="Words in Context", layout="wide")
+st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
-button_html = """
-<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
-<script>
-function selectWord(word) {
-    const base = window.location.href.split("?")[0];
-    const newUrl = base + '?word=' + encodeURIComponent(word);
-    window.location.href = newUrl;  // Force reload
-}
-</script>
-"""
+# --- Simulate inline layout using columns (6 per row) ---
+cols_per_row = 6
+row = st.columns(cols_per_row)
+col_index = 0
 
-for word in sorted_vocab:
-    button_html += f"""
-    <button onclick="selectWord('{word}')" style="
-        padding: 10px 16px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f0f0f0;
-        cursor: pointer;">{word}</button>
-    """
+for word in sorted_vocab.keys():
+    if row[col_index].button(word):
+        st.session_state.selected_word = word
+    col_index += 1
+    if col_index == cols_per_row:
+        row = st.columns(cols_per_row)
+        col_index = 0
 
-button_html += "</div>"
+# --- Display selected word info ---
+if "selected_word" in st.session_state:
+    word = st.session_state.selected_word
+    meaning, sentence = sorted_vocab[word]
 
-components.html(button_html, height=300)
-
-# ---------- Handle Selection ----------
-query_params = st.query_params
-selected_word = query_params.get("word", [None])[0]
-
-if selected_word and selected_word in sorted_vocab:
-    meaning, sentence = sorted_vocab[selected_word]
-
-    # Generate English TTS for word
-    tts_word = gTTS(text=selected_word, lang='en')
+    # Generate TTS for word
+    tts_word = gTTS(text=word, lang='en')
     audio_word = BytesIO()
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
@@ -87,10 +72,11 @@ if selected_word and selected_word in sorted_vocab:
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
-    st.markdown(f"## ✅ {selected_word}")
+    st.markdown(f"## ✅ {word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
     st.markdown("🔈 **Word Pronunciation**")
     st.audio(audio_word, format="audio/mp3")
     st.markdown("🗣️ **Sentence Audio**")
+    st.audio(audio_sentence, format="audio/mp3")
     st.audio(audio_sentence, format="audio/mp3")
