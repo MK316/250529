@@ -53,14 +53,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown(f"**A:** {data['A']}")
-    st.image(data["imgA"], caption="A", width=200)
+    st.image(data["imgA"], caption="A", width=150)
 
 with col2:
     st.markdown(f"**B:** {data['B']}")
-    st.image(data["imgB"], caption="B", width=200)
+    st.image(data["imgB"], caption="B", width=150)
 
 # st.markdown("**🔸 결합된 문장:**")
 st.success(f"🔸 결합된 문장: {data['C']}")
 st.caption(data["K"])
-st.image(data["imgC"], caption="A + B", width=300)
+st.image(data["imgC"], caption="A + B", width=250)
 
