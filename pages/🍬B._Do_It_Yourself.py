@@ -148,29 +148,49 @@ with level2:
             distractors = [x for x in base if x != correct]
             return random.sample(distractors, 3) + [correct]
 
+    # Initialize session state
     if "tab2_index" not in st.session_state:
         st.session_state.tab2_index = 0
+        st.session_state.tab2_feedback = False
+        st.session_state.tab2_user_answer = None
+        st.session_state.tab2_options = []
 
     row = df.iloc[st.session_state.tab2_index]
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
-    options = generate_options(row['Level_02_Focus'])
 
+    # Generate options only once per question
+    if not st.session_state.tab2_options:
+        st.session_state.tab2_options = generate_options(row['Level_02_Focus'])
+
+    options = st.session_state.tab2_options
+
+    # Display question
     st.markdown("**문장:**")
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
-
     st.markdown(question, unsafe_allow_html=True)
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
-    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
+
+    # Answer selection
+    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
 
     if st.button("정답 확인", key="check2"):
-        if user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
+        st.session_state.tab2_user_answer = user_answer
+        st.session_state.tab2_feedback = True
+
+    # Feedback
+    if st.session_state.tab2_feedback:
+        if st.session_state.tab2_user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
             st.success("🎉 정답입니다!")
         else:
             st.error(f"❌ 정답은: {row['Level_02_Focus']}")
 
     if st.button("다음 문장", key="next2"):
         st.session_state.tab2_index = (st.session_state.tab2_index + 1) % len(df)
+        st.session_state.tab2_feedback = False
+        st.session_state.tab2_user_answer = None
+        st.session_state.tab2_options = []
         st.rerun()
+
 
 # -------------------------------
 # 🐳 Level 3: 단어 배열 퀴즈
