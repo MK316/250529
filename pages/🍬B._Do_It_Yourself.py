@@ -156,6 +156,8 @@ with level2:
     options = generate_options(row['Level_02_Focus'])
 
     st.markdown("**문장:**")
+    st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
+
     st.markdown(question, unsafe_allow_html=True)
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
@@ -227,8 +229,9 @@ with level3:
         return result
     
     user_input = smart_join(st.session_state.tab3_selected)
-
+    
     st.write(user_input)
+    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
 
 
     # 🔧 정답 비교를 위한 정규화 함수
