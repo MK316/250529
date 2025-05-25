@@ -2,10 +2,10 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="관계대명사 배우기", layout="centered")
-st.title("📘 관계대명사 배우기")
+st.markdown("##📘 관계대명사 배우기")
 
 # --- 드롭다운 선택 ---
-st.subheader("✨ 학습할 관계대명사를 선택하세요:")
+st.markdown("### ✨ 학습할 관계대명사를 선택하세요:")
 target = st.selectbox("관계대명사 선택", ["who", "which", "that"])
 
 # --- 관계대명사별 설명 및 예문 + 이미지 링크 포함 ---
