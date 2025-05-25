@@ -12,16 +12,22 @@ import streamlit.components.v1 as components
 def load_data():
     url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
     df = pd.read_csv(url)
-    df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
+    df = df.dropna(subset=[
+        "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
+        "Level_02", "Level_02_Focus", "Level_02_Meaning",
+        "Level_03", "Level_03_Meaning"
+    ])
     return df.reset_index(drop=True)
 
 df = load_data()
 
 # 탭 구성
-tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
+level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
-# Level 1
-with tab1:
+# -------------------------------
+# ✅ Level 1: 문장 정답 판단
+# -------------------------------
+with level1:
     st.subheader("✅ 문장이 맞는지 판단하기")
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
@@ -42,16 +48,18 @@ with tab1:
 
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
-        st.experimental_rerun()
+        st.rerun()
 
-# Level 2
-with tab2:
+# -------------------------------
+# ✏️ Level 2: 관계대명사 빈칸 채우기
+# -------------------------------
+with level2:
     st.subheader("✏️ 관계대명사 빈칸 채우기")
 
     def make_cloze(sentence, focus):
         parts = [p.strip() for p in focus.split(",")] if "," in focus else [focus.strip()]
         for p in parts:
-            sentence = re.sub(rf"\\b{re.escape(p)}\\b", "<u>_____</u>", sentence, 1)
+            sentence = re.sub(rf"\b{re.escape(p)}\b", "<u>_____</u>", sentence, 1)
         return sentence
 
     def generate_options(correct):
@@ -75,7 +83,7 @@ with tab2:
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
     options = generate_options(row['Level_02_Focus'])
 
-    st.markdown(f"**문장:**")
+    st.markdown("**문장:**")
     st.markdown(question, unsafe_allow_html=True)
     st.caption(row['Level_02_Meaning'])
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
@@ -88,17 +96,19 @@ with tab2:
 
     if st.button("다음 문장", key="next2"):
         st.session_state.tab2_index = (st.session_state.tab2_index + 1) % len(df)
-        st.experimental_rerun()
+        st.rerun()
 
-# Level 3
-with tab3:
+# -------------------------------
+# 🧩 Level 3: 단어 배열 퀴즈
+# -------------------------------
+with level3:
     st.subheader("🧩 단어 배열 퀴즈")
 
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.session_state.tab3_rerun_flag = False
+        st.session_state.tab3_trigger = False
 
     row = df.iloc[st.session_state.tab3_index]
     answer = row['Level_03']
@@ -113,12 +123,11 @@ with tab3:
         if word not in st.session_state.tab3_selected:
             if cols[i].button(word, key=f"word_{i}"):
                 st.session_state.tab3_selected.append(word)
-                st.session_state.tab3_rerun_flag = True
+                st.session_state.tab3_trigger = True
 
-    # 안전한 rerun 트리거
-    if st.session_state.tab3_rerun_flag:
-        st.session_state.tab3_rerun_flag = False
-        st.experimental_rerun()
+    if st.session_state.tab3_trigger:
+        st.session_state.tab3_trigger = False
+        st.rerun()
 
     st.markdown("**문장 조립:**")
     st.write(" ".join(st.session_state.tab3_selected))
@@ -133,4 +142,4 @@ with tab3:
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.experimental_rerun()
+        st.rerun()
