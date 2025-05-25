@@ -5,7 +5,7 @@ st.set_page_config(page_title="관계대명사 배우기", layout="centered")
 st.title("📘 관계대명사 (Relative Pronouns)")
 
 # --- 설명 ---
-st.markdown("##1. 관계대명사란?")
+st.markdown("## 1. 관계대명사란?")
 st.write("""
 관계대명사는 **두 문장을 연결하여 더 자연스럽고 간결하게 표현**할 수 있게 도와주는 말이에요.  
 주로 **사람, 사물, 장소** 등에 대해 **추가 설명**을 붙일 때 사용합니다.
