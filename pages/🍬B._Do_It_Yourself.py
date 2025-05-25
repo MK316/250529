@@ -7,8 +7,6 @@ from gtts import gTTS
 import tempfile
 import base64
 
-
-
 # ---------------------
 # 🧠 퀴즈 앱 통합 (Level 1~3)
 # ---------------------
@@ -37,17 +35,12 @@ def highlight_focus(sentence, focus):
     except:
         return sentence
 
-
-
-
 # 탭 구성
 level1, level2, level3 = st.tabs(["🌀 Level 1", "🌀 Level 2", "🌀 Level 3"])
 
 # -------------------------------
 # ✅ Level 1: 문장 정답 판단
 # -------------------------------
-
-
 with level1:
     st.subheader("🐥 문장이 맞는지 판단하기 (Level 1)")
 
@@ -55,17 +48,6 @@ with level1:
         st.session_state.tab1_index = 0
         st.session_state.tab1_score = 0
         st.session_state.show_hint1 = False
-
-    def highlight_focus(sentence, focus):
-        if not sentence or not focus:
-            return sentence
-        try:
-            focus = str(focus).strip()
-            escaped_focus = re.escape(focus)
-            pattern = re.compile(rf'\b({escaped_focus})\b')
-            return pattern.sub(r"<span style='color:red; font-weight:bold'>\1</span>", sentence, count=1)
-        except:
-            return sentence
 
     row = df.iloc[st.session_state.tab1_index]
     sentence = row['Level_01']
@@ -84,7 +66,6 @@ with level1:
 
     st.caption("🐾 해석석: " + row['Level_01_Meaning'])
 
-    # Hint button and audio (only show on click)
     if st.button("💡 Hint 보기 (정답 듣기)"):
         st.session_state.show_hint1 = True
 
@@ -118,9 +99,8 @@ with level1:
 
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
-        st.session_state.show_hint1 = False  # Reset hint flag
+        st.session_state.show_hint1 = False
         st.rerun()
-
 
 # -------------------------------
 # ✏️ Level 2: 관계대명사 빈칸 채우기
@@ -148,7 +128,6 @@ with level2:
             distractors = [x for x in base if x != correct]
             return random.sample(distractors, 3) + [correct]
 
-    # Initialize session state
     if "tab2_index" not in st.session_state:
         st.session_state.tab2_index = 0
         st.session_state.tab2_feedback = False
@@ -158,31 +137,22 @@ with level2:
     row = df.iloc[st.session_state.tab2_index]
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
 
-
-    # Generate options only once per question
-    if st.session_state.get("tab2_options") is None:
+    if not st.session_state.tab2_options:
         st.session_state.tab2_options = generate_options(row['Level_02_Focus'])
-
 
     options = st.session_state.tab2_options
 
-    # Display question
     st.markdown("**문장:**")
-    if "tab3_index" not in st.session_state:
-    st.session_state.tab3_index = 0
-
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
     st.markdown(question, unsafe_allow_html=True)
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
 
-    # Answer selection
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
 
     if st.button("정답 확인", key="check2"):
         st.session_state.tab2_user_answer = user_answer
         st.session_state.tab2_feedback = True
 
-    # Feedback
     if st.session_state.tab2_feedback:
         if st.session_state.tab2_user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
             st.success("🎉 정답입니다!")
@@ -196,14 +166,12 @@ with level2:
         st.session_state.tab2_options = []
         st.rerun()
 
-
 # -------------------------------
 # 🐳 Level 3: 단어 배열 퀴즈
 # -------------------------------
 with level3:
     st.subheader("🐳 단어 배열 퀴즈 (Level 3)")
 
-    # 초기 상태 설정
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
@@ -219,7 +187,6 @@ with level3:
     answer = row['Level_03']
     meaning = row['Level_03_Meaning']
 
-    # 단어 셔플링 (축약형 및 구두점 유지)
     if not st.session_state.tab3_shuffled:
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
@@ -227,7 +194,6 @@ with level3:
     st.caption("🐾 해석: " + meaning)
     st.markdown("### 👉 단어를 클릭하세요:")
 
-    # 버튼 5개씩 정렬 (왼쪽 정렬 유지)
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
@@ -248,7 +214,7 @@ with level3:
         result = ""
         for i, word in enumerate(words):
             if i > 0 and re.match(r"[.,!?;]", word):
-                result += word  # 구두점은 앞 단어에 붙이기
+                result += word
             else:
                 if result:
                     result += " "
