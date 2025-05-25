@@ -45,12 +45,10 @@ level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 with level1:
     st.subheader("🐥 문장이 맞는지 판단하기 (Level 1)")
 
-    # 🔧 인덱스 초기화
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
         st.session_state.tab1_score = 0
 
-    # ✅ Highlight function
     def highlight_focus(sentence, focus):
         if not sentence or not focus:
             return sentence
@@ -62,13 +60,14 @@ with level1:
         except:
             return sentence
 
-    # 🔍 현재 문제 가져오기
     row = df.iloc[st.session_state.tab1_index]
     sentence = row['Level_01']
     focus = row['Level_01_Focus']
     highlighted = highlight_focus(sentence, focus)
 
-    # ✅ 문장 출력 (하이라이트 포함)
+    # 👇 진행 상황 표시
+    st.caption(f"🔢 진행 상황: {st.session_state.tab1_index + 1} / {len(df)} 문장")
+
     st.markdown("**문장:**")
     components.html(f"""
         <div style='font-size:20px; font-family:sans-serif; line-height:1.6em;'>
@@ -76,13 +75,10 @@ with level1:
         </div>
     """, height=80)
 
-    # 🐾 해석
     st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
 
-    # ✅ 사용자 선택
     choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
 
-    # ✅ 정답 확인
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
             st.success("정답입니다!")
@@ -91,7 +87,6 @@ with level1:
             st.error("틀렸습니다.")
             st.info(f"👉 올바른 문장: {row['Level_01_Correct']}")
 
-    # ⏭️ 다음 문장
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
         st.rerun()
