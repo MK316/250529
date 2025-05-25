@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.markdown("### 1학년 2반")
+st.markdown("### 1학년 2반 English Classroom")
 st.markdown("#### 🐣 Applications (0529)")
 
 url="https://github.com/MK316/250529/raw/main/images/bg01-rose.jpg"
