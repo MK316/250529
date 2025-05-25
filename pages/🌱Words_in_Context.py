@@ -36,38 +36,42 @@ vocab_dict = {
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
-# Sorted vocabulary dictionary (already prepared)
+
+
+# Sort vocab
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# ✅ Step 1: Get current page path dynamically
-current_page_path = st.experimental_get_url().split("?")[0]
-
-# ✅ Step 2: Create inline buttons with correct link
+# Display word buttons using dynamic JS for page-safe redirection
 st.markdown("### 📘 Click a word to learn")
-html = "<div style='display: flex; flex-wrap: wrap; gap: 10px;'>"
+
+# Build the HTML for inline buttons (wrapped and clickable)
+button_html = """
+<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
+"""
 
 for word in sorted_vocab:
-    encoded_word = urllib.parse.quote(word)
-    html += f"""
-    <a href="{current_page_path}?word={encoded_word}" target="_self">
-        <button style="
-            padding: 10px 16px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            cursor: pointer;">{word}</button>
-    </a>
+    encoded = urllib.parse.quote(word)
+    button_html += f"""
+    <button onclick="window.location.href=window.location.pathname + '?word={encoded}'"
+        style="
+        padding: 10px 16px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        cursor: pointer;">{word}</button>
     """
 
-html += "</div>"
-components.html(html, height=300)
+button_html += "</div>"
 
-# ✅ Step 3: Handle query param
+# Render buttons with JS click behavior
+components.html(button_html, height=300)
+
+# Handle selection from query parameter
 query_params = st.experimental_get_query_params()
 selected_word = query_params.get("word", [None])[0]
 
-# ✅ Step 4: Show TTS and meaning if word selected
+# Show info if selected
 if selected_word and selected_word in sorted_vocab:
     meaning, sentence = sorted_vocab[selected_word]
 
