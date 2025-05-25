@@ -7,7 +7,7 @@ import urllib.parse
 
 # 🔡 Vocabulary Dictionary: word → (Korean meaning, example sentence)
 vocab_dict = {
-    "Artificial Intelligence (AI)": ("인공지능", "This is the path that 'AI' followed."),
+    "Artificial Intelligence (AI)": ("인공지능", "This is the path that AI followed."),
     "artists": ("예술가들", "The AI, which mimics the style of the other artists, created the picture."),
     "artworks": ("작품들", "The show had artworks that moved!"),
     "built": ("지었다", "They built a machine that mimics artists."),
@@ -55,11 +55,16 @@ if selected_word != "-- Select a word --":
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
 
+    # ✅ Fix pronunciation of "AI" in the sentence
+    import re
+    cleaned_sentence = re.sub(r"\bAI\b", "A. I.", sentence)
+
     # Generate TTS for sentence
-    tts_sentence = gTTS(text=sentence, lang='en')
+    tts_sentence = gTTS(text=cleaned_sentence, lang='en')
     audio_sentence = BytesIO()
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
+
 
     # ✅ Display content
     st.markdown(f"## ✅ {selected_word}")
