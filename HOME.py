@@ -12,7 +12,7 @@ with col1:
 
 with col2:
     url2 = "https://github.com/MK316/250529/raw/main/images/0529qr.jpg"
-    st.image(url2, caption="📲 Scan to join!", use_container_width=True)
+    st.image(url2, caption="📲 Scan to join!", width=200)
 
 st.markdown("---")
 st.markdown("### 🐼 Join with QR code!")
