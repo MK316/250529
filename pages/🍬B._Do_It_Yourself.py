@@ -109,10 +109,23 @@ with level2:
     st.subheader("🐸 관계대명사 빈칸 채워기 (Level 2)")
 
     def make_cloze(sentence, focus):
-        parts = [p.strip() for p in focus.split(",")] if "," in focus else [focus.strip()]
-        for p in parts:
-            sentence = re.sub(rf"(?<!<)\b{re.escape(p)}\b", "<u>_____</u>", sentence, 1)
-        return sentence
+        if not sentence or not focus:
+            return sentence
+    
+        focus = focus.strip()
+    
+        # Special case for focus like ", is"
+        if focus == ", is":
+            return sentence.replace(", is", ", <u>_____</u> is", 1)
+    
+        # General case for multi-word focus
+        if " " in focus or "," in focus:
+            escaped_focus = re.escape(focus)
+            return re.sub(escaped_focus, "<u>_____</u>", sentence, count=1)
+    
+        # Single word focus
+        return re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, count=1)
+
 
     def generate_options(correct):
         base = ['that', 'which', 'who', 'where']
