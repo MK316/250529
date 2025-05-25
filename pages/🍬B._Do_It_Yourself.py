@@ -205,6 +205,7 @@ with level3:
     if not st.session_state.tab3_shuffled:
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
+
     st.markdown("---")
     st.caption("🐾 해석: " + meaning)
     st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
@@ -218,6 +219,12 @@ with level3:
                 if cols[j].button(word, key=f"word_{i+j}"):
                     st.session_state.tab3_selected.append(word)
                     st.session_state.tab3_trigger = True
+
+    # 🔧 단어 선택 취소 버튼
+    if st.session_state.tab3_selected:
+        if st.button("↩️ 마지막 선택 취소"):
+            st.session_state.tab3_selected.pop()
+            st.rerun()
 
     if st.session_state.tab3_trigger:
         st.session_state.tab3_trigger = False
