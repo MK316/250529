@@ -150,7 +150,6 @@ with level2:
 
     options = st.session_state.tab2_options
 
-    st.markdown("**문장:**")
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
     
     import streamlit.components.v1 as components
