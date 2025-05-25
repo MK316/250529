@@ -46,7 +46,7 @@ st.title("🎧 Vocabulary Practice with Audio and Meaning")
 # ✅ Dropdown to select a word
 selected_word = st.selectbox("Choose a word:", ["-- Select a word --"] + list(sorted_vocab.keys()))
 
-if selected_word != "-- Select a word --":
+if selected_word != "-- Select a word to review --":
     meaning, sentence = sorted_vocab[selected_word]
 
     # Generate TTS for word
