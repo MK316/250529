@@ -205,7 +205,7 @@ with level3:
     if not st.session_state.tab3_shuffled:
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
-
+    st.markdown("---")
     st.caption("🐾 해석: " + meaning)
     st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
 
