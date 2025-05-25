@@ -140,13 +140,23 @@ with level3:
         st.rerun()
 
     st.markdown("**문장 조립:**")
-    st.write(" ".join(st.session_state.tab3_selected))
+    user_input = " ".join(st.session_state.tab3_selected)
+    st.write(user_input)
+
+    # 🔧 정답 비교를 위한 정규화 함수
+    def normalize(text):
+        return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
     if st.button("정답 확인", key="check3"):
-        if " ".join(st.session_state.tab3_selected) == answer:
+        normalized_user = normalize(user_input)
+        normalized_answer = normalize(answer)
+
+        if normalized_user == normalized_answer:
             st.success("🎉 정답입니다!")
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
+            st.info(f"👉 정답: {answer}")
+
 
     if st.button("다음 문장", key="next3"):
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
