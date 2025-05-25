@@ -203,31 +203,31 @@ with level2:
 with level3:
     st.subheader("🐳 단어 배열 퀴즈 (Level 3)")
 
-    # Initialize session states
+    # 초기 상태 설정
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
+        st.session_state.tab3_trigger = False
+
     if "tab3_trigger" not in st.session_state:
         st.session_state.tab3_trigger = False
 
-    # Show progress
     st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
 
-    # Get current row
     row = df.iloc[st.session_state.tab3_index]
     answer = row['Level_03']
     meaning = row['Level_03_Meaning']
 
-    # Tokenize (preserve contractions and punctuation)
+    # 단어 셔플링 (축약형 및 구두점 유지)
     if not st.session_state.tab3_shuffled:
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
 
-    st.caption(meaning)
+    st.caption("🐾 해석: " + meaning)
     st.markdown("### 👉 단어를 클릭하세요:")
 
-    # Display word buttons (5 per row)
+    # 버튼 5개씩 정렬 (왼쪽 정렬 유지)
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
@@ -248,7 +248,7 @@ with level3:
         result = ""
         for i, word in enumerate(words):
             if i > 0 and re.match(r"[.,!?;]", word):
-                result += word
+                result += word  # 구두점은 앞 단어에 붙이기
             else:
                 if result:
                     result += " "
@@ -273,4 +273,3 @@ with level3:
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
         st.rerun()
-
