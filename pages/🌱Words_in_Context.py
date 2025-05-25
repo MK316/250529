@@ -36,58 +36,52 @@ vocab_dict = {
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
-# 🧠 Sort alphabetically
+# Sort words alphabetically
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# 🎨 App UI
-st.set_page_config(page_title="Word Practice", layout="wide")
-st.title("🎧 Vocabulary Practice with Audio and Meaning")
+# Display inline button layout using real HTML
+st.markdown("### 📘 Click a word to learn")
 
-# 💡 Add inline-flex CSS for layout
-st.markdown("""
-    <style>
-    .word-box-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .word-box-container .stButton>button {
-        padding: 8px 16px;
-        font-size: 16px;
-        border-radius: 8px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+html = """
+<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
+"""
+for word in sorted_vocab:
+    html += f"""
+    <a href="/?word={word}" target="_self">
+        <button style="
+            padding: 10px 16px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;">{word}</button>
+    </a>
+    """
+html += "</div>"
 
-# 🌱 Render inline buttons using real Streamlit buttons
-st.markdown('<div class="word-box-container">', unsafe_allow_html=True)
+components.html(html, height=300)
 
-for word in sorted_vocab.keys():
-    if st.button(word, key=f"word_{word}"):
-        st.session_state.selected_word = word
+# Handle selection
+query_params = st.experimental_get_query_params()
+selected_word = query_params.get("word", [None])[0]
 
-st.markdown('</div>', unsafe_allow_html=True)
+if selected_word and selected_word in sorted_vocab:
+    meaning, sentence = sorted_vocab[selected_word]
 
-# 🔊 When clicked
-if "selected_word" in st.session_state:
-    word = st.session_state.selected_word
-    meaning, sentence = sorted_vocab[word]
-
-    # Word Audio
-    tts_word = gTTS(text=word, lang='en')
+    # Word audio
+    tts_word = gTTS(text=selected_word, lang='en')
     audio_word = BytesIO()
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
 
-    # Sentence Audio
+    # Sentence audio
     tts_sentence = gTTS(text=sentence, lang='en')
     audio_sentence = BytesIO()
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
-    # 🎯 Display
-    st.markdown(f"## ✅ {word}")
+    # Display details
+    st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
 
