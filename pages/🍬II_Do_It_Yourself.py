@@ -3,6 +3,10 @@ import pandas as pd
 import random
 import re
 import streamlit.components.v1 as components
+from gtts import gTTS
+import tempfile
+import base64
+
 
 
 # ---------------------
@@ -63,9 +67,9 @@ with level1:
     row = df.iloc[st.session_state.tab1_index]
     sentence = row['Level_01']
     focus = row['Level_01_Focus']
+    correct_sentence = row['Level_01_Correct']
     highlighted = highlight_focus(sentence, focus)
 
-    # 👇 진행 상황 표시
     st.caption(f"🔢 진행 상황: {st.session_state.tab1_index + 1} / {len(df)} 문장")
 
     st.markdown("**문장:**")
@@ -77,6 +81,21 @@ with level1:
 
     st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
 
+    # 🔈 Hint: play audio of correct sentence
+    with st.expander("💡 Hint (Click to listen to the correct sentence)"):
+        tts = gTTS(text=correct_sentence, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+            tts.save(fp.name)
+            audio_data = open(fp.name, "rb").read()
+            b64 = base64.b64encode(audio_data).decode()
+            audio_html = f"""
+            <audio controls>
+                <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            """
+            st.markdown(audio_html, unsafe_allow_html=True)
+
     choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
 
     if st.button("정답 확인", key="check1"):
@@ -86,11 +105,12 @@ with level1:
             st.error("❌ 틀렸습니다.")
         
         st.markdown("**📘 올바른 문장:**")
-        st.info(row['Level_01_Correct'])
+        st.info(correct_sentence)
 
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
         st.rerun()
+
 
 
 # -------------------------------
