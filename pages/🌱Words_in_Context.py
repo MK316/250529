@@ -33,12 +33,9 @@ vocab_dict = {
     "presented": ("제시했다", "They presented a video that showed the AI's production process."),
     "production": ("생산", "They presented a video that showed the AI's production process."),
     "programmed": ("프로그래밍된", "Look at the mechanism of AI creativity, which is programmed to work in a similar way to human creativity."),
-    "robots": ("로봇들", "I met a guy who teaches robots to draw."),
-    "scene": ("현장", "An incident occurred that thrilled the contemporary art scene."),
     "sketch": ("스케치하다", "Here's a program that learns to sketch."),
     "tech": ("기술", "The style, which feels old, is made by new tech."),
-    "thrilled": ("흥분시켰다", "An incident occurred that thrilled the contemporary art scene."),
-    "viewers": ("관객", "We can see AI platforms and art that some viewers consider more impressive."),
+    "thrilled": ("전율하게 하다", "An incident occurred that thrilled the contemporary art scene."),
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
