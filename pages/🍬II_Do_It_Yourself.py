@@ -115,7 +115,7 @@ with level3:
     meaning = row['Level_03_Meaning']
 
     if not st.session_state.tab3_shuffled:
-       words = re.findall(r"\w+(?:'\w+)?|[^\w\s]", answer)
+       words = re.findall(r"\b\w+(?:'\w+)?\b|[.,!?;]", answer)
 
        st.session_state.tab3_shuffled = random.sample(words, len(words))
 
