@@ -1,3 +1,3 @@
-import stramlit as st
+import streamlit as st
 
-st.title("관계대명사")
+st.markdown("### 관계대명사 복습하기")
