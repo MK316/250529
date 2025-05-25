@@ -251,43 +251,38 @@ with level3:
     def normalize(text):
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
-    # 🔁 Initial setup
+    # 🔁 Setup state
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
     if "tab3_selected" not in st.session_state:
         st.session_state.tab3_selected = []
     if "tab3_shuffled" not in st.session_state:
         st.session_state.tab3_shuffled = []
-    if "tab3_just_finished" not in st.session_state:
-        st.session_state.tab3_just_finished = False
-    if "tab3_last_correct" not in st.session_state:
-        st.session_state.tab3_last_correct = False
+    if "tab3_trigger_balloons" not in st.session_state:
+        st.session_state.tab3_trigger_balloons = False
     
-    # ✅ 정답 확인 버튼
+    # ✅ Check answer
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
-    
-            # ✅ Only trigger on LAST question
+            # ✅ Only trigger balloons on last item
             if st.session_state.tab3_index == len(df) - 1:
-                st.session_state.tab3_last_correct = True
-                st.session_state.tab3_just_finished = True
+                st.session_state.tab3_trigger_balloons = True  # 🎈 trigger set
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-            st.session_state.tab3_last_correct = False
-            st.session_state.tab3_just_finished = False
+            st.session_state.tab3_trigger_balloons = False
     
-    # ✅ Balloons only on correct final answer + just clicked 확인
-    if st.session_state.tab3_just_finished and st.session_state.tab3_last_correct:
+    # ✅ Show balloons only once, right after last answer
+    if st.session_state.tab3_trigger_balloons:
         st.balloons()
-        st.session_state.tab3_just_finished = False
-        st.session_state.tab3_last_correct = False
-
+        st.session_state.tab3_trigger_balloons = False  # 🔒 reset immediately
+    
+    # ✅ 다음 문장
     if st.button("다음 문장", key="next3"):
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.session_state.tab3_just_finished = False
-        st.session_state.tab3_last_correct = False
+        st.session_state.tab3_trigger_balloons = False  # 🔒 also reset here
         st.rerun()
+
