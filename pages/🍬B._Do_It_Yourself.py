@@ -106,19 +106,19 @@ with level1:
 # ✏️ Level 2: 관계대명사 빈칸 채우기
 # -------------------------------
 with level2:
-    st.subheader("🐸 관계대명사 빈칸 채워기 (Level 2)")
+    st.subheader("🐸 관계대명사 빈칸 채우기 (Level 2)")
 
     def make_cloze(sentence, focus):
         if "," in focus:
             parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
                 part1, part2 = parts
-                # Replace part1
-                sentence = re.sub(rf"\\b{re.escape(part1)}\\b", "<u>_____</u>", sentence, 1)
-                # Replace part2 only if preceded by comma and space
-                sentence = re.sub(rf"(,\s*){re.escape(part2)}\\b", r"\\1<u>_____</u>", sentence, 1)
+                # 첫 번째 단어 치환
+                sentence = re.sub(rf"\b{re.escape(part1)}\b", "<u>_____</u>", sentence, 1)
+                # 두 번째 단어는 쉼표 뒤에서만 치환
+                sentence = re.sub(rf"(,\s*){re.escape(part2)}\b", r"\1<u>_____</u>", sentence, 1)
         else:
-            sentence = re.sub(rf"\\b{re.escape(focus)}\\b", "<u>_____</u>", sentence, 1)
+            sentence = re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, 1)
         return sentence
 
     def generate_options(correct):
@@ -151,7 +151,14 @@ with level2:
 
     st.markdown("**문장:**")
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
-    st.markdown(question, unsafe_allow_html=True)
+    
+    import streamlit.components.v1 as components
+    components.html(f"""
+        <div style='font-size:20px; font-family:sans-serif; line-height:1.6em;'>
+            {question}
+        </div>
+    """, height=80)
+
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
 
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
