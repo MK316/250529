@@ -43,7 +43,7 @@ st.set_page_config(page_title="Words in Context", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
 # --- Simulate inline layout using columns (6 per row) ---
-cols_per_row = 6
+cols_per_row = 5
 row = st.columns(cols_per_row)
 col_index = 0
 
