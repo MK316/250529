@@ -43,29 +43,33 @@ st.set_page_config(page_title="Word Practice", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
 # 🔘 Display each word as a button in rows
-# 🔤 Render inline buttons with CSS (auto-sized boxes)
+# CSS for spacing and wrapping
 st.markdown("""
-<style>
-.word-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.word-button {
-    flex-grow: 0;
-}
-</style>
-<div class="word-container">
+    <style>
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+    .stButton>button {
+        height: auto;
+        padding: 0.5rem 1rem;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+    </style>
 """, unsafe_allow_html=True)
 
-# Render actual Streamlit buttons with inline layout
-for word in sorted_vocab.keys():
-    cols = st.columns([0.1, 0.9])  # trick for spacing, adjust if needed
-    with cols[0]:
-        if st.button(word, key=f"btn_{word}"):
-            st.session_state.selected_word = word
+# 🌱 Inline layout using st.button() dynamically inside styled HTML container
+st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+for word in sorted_vocab.keys():
+    button_clicked = st.button(word, key=f"btn_{word}")
+    if button_clicked:
+        st.session_state.selected_word = word
+
+st.markdown('</div>', unsafe_allow_html=True)
 
 
 # Create a form to handle all buttons inside one block
