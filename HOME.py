@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.markdown("### 🐣 1학년 2반 English Classroom")
+st.markdown("### 🐣 1학년 2반 English Class")
 st.caption("These applications here are prepared for the May 29 class.")
 
 # Two-column layout for images
