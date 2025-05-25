@@ -41,7 +41,7 @@ sorted_vocab = dict(sorted(vocab_dict.items()))
 
 # ✅ Page Layout
 st.set_page_config(page_title="Words in Context", layout="wide")
-st.markdown("### 🎧 Vocabulary Practice with Audio and Meaning")
+st.markdown("### 🎧 단어를 들으며 의미를 확인해 보세요.")
 
 # ✅ Dropdown to select a word
 selected_word = st.selectbox("👉 학습할 단어를 선택하세요:", ["-- Select a word --"] + list(sorted_vocab.keys()))
