@@ -67,8 +67,13 @@ st.caption(data["K"])
 def load_data():
     url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
     df = pd.read_csv(url)
-    df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
+    df = df.dropna(subset=[
+        "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
+        "Level_02", "Level_02_Focus", "Level_02_Meaning",
+        "Level_03", "Level_03_Meaning"  # ✅ 이 부분 추가
+    ])
     return df.reset_index(drop=True)
+
 
 df = load_data()
 
