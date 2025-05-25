@@ -24,6 +24,7 @@ if df.empty:
 # Cloze 문장 생성
 # -------------------------
 
+import re
 
 def make_cloze(sentence, focus):
     focus = str(focus).strip()
@@ -32,24 +33,29 @@ def make_cloze(sentence, focus):
         parts = [p.strip() for p in focus.split(",")]
         new_sentence = sentence
         for part in parts:
-            # 다음 글자 확인을 위한 정규식 패턴
-            pattern = re.compile(rf"({re.escape(part)})(\W?)")
+            # 관계대명사 뒤에 공백이 없는 경우를 위한 정규식
+            pattern = re.compile(rf"({re.escape(part)})(?=\W|\s|$)")
             match = pattern.search(new_sentence)
             if match:
-                punctuation = match.group(2)
-                # 단어 다음이면 공백 추가, 문장부호면 공백 없음
-                blank = "<u> _____ </u>" + (" " if punctuation == "" or punctuation.isspace() else "")
-                new_sentence = new_sentence.replace(match.group(0), blank + punctuation, 1)
+                start = match.start()
+                end = match.end()
+                next_char = new_sentence[end:end+1]
+
+                # 단어 다음엔 공백 필요
+                spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
+                new_sentence = new_sentence[:start] + "<u> _____ </u>" + spacing + new_sentence[end:]
         return new_sentence
     else:
-        # 단일 단어 처리
-        pattern = re.compile(rf"({re.escape(focus)})(\W?)")
+        pattern = re.compile(rf"({re.escape(focus)})(?=\W|\s|$)")
         match = pattern.search(sentence)
         if match:
-            punctuation = match.group(2)
-            blank = "<u> _____ </u>" + (" " if punctuation == "" or punctuation.isspace() else "")
-            return sentence.replace(match.group(0), blank + punctuation, 1)
+            start = match.start()
+            end = match.end()
+            next_char = sentence[end:end+1]
+            spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
+            return sentence[:start] + "<u> _____ </u>" + spacing + sentence[end:]
         return sentence
+
 
 
 # -------------------------
