@@ -59,8 +59,8 @@ with col2:
     st.markdown(f"**B:** {data['B']}")
     st.image(data["imgB"], caption="B", width=200)
 
-st.markdown("**🔸 결합된 문장:**")
-st.success(f"{data['C']}")
+# st.markdown("**🔸 결합된 문장:**")
+st.success(f"🔸 결합된 문장: {data['C']}")
 st.caption(data["K"])
 st.image(data["imgC"], caption="A + B", width=300)
 
