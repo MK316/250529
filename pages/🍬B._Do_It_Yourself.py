@@ -114,23 +114,24 @@ with level2:
     
         focus = focus.strip()
     
-        # Special case: if focus starts with a comma and a word (e.g. ", which", ", is")
-        if re.match(r"^,\s*\w+$", focus):
-            parts = focus.split(",")
+        # Case 1: comma-separated focus (e.g., "that, which")
+        if "," in focus:
+            parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
-                word = parts[1].strip()
-                pattern = r",\s*" + re.escape(word)
-                replacement = ", <u>_____</u> " + word
-                return re.sub(pattern, replacement, sentence, count=1)
+                first, second = parts
+                # Replace second first if it appears later in the sentence
+                sentence = re.sub(rf"\b{re.escape(second)}\b", "<u>_____</u>", sentence, count=1)
+                sentence = re.sub(rf"\b{re.escape(first)}\b", "<u>_____</u>", sentence, count=1)
+                return sentence
     
-        # Multi-word or fallback case
-        if " " in focus or "," in focus:
-            escaped_focus = re.escape(focus)
-            return re.sub(escaped_focus, "<u>_____</u>", sentence, count=1)
+        # Case 2: just ", which" or ", is"
+        if re.match(r"^,\s*\w+$", focus):
+            word = focus.replace(",", "").strip()
+            return re.sub(r",\s*" + re.escape(word), ", <u>_____</u> " + word, sentence, count=1)
     
-        # Single word
+        # Case 3: single word focus
         return re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, count=1)
-    
+
 
 
     def generate_options(correct):
