@@ -202,85 +202,75 @@ with level2:
 # -------------------------------
 with level3:
     st.subheader("🐳 단어 배열 퀴즈 (Level 3)")
+
+    # Initialize session states
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.session_state.tab3_trigger = False
-
-    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
-
     if "tab3_trigger" not in st.session_state:
         st.session_state.tab3_trigger = False
 
+    # Show progress
+    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
+
+    # Get current row
     row = df.iloc[st.session_state.tab3_index]
     answer = row['Level_03']
     meaning = row['Level_03_Meaning']
 
+    # Tokenize (preserve contractions and punctuation)
     if not st.session_state.tab3_shuffled:
-       words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
-
-
-       st.session_state.tab3_shuffled = random.sample(words, len(words))
+        words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
+        st.session_state.tab3_shuffled = random.sample(words, len(words))
 
     st.caption(meaning)
-
-    ## NEw
     st.markdown("### 👉 단어를 클릭하세요:")
 
-# Arrange 5 word buttons per row (left-aligned if fewer than 5)
+    # Display word buttons (5 per row)
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
-        cols = st.columns(5)  # Always create 5 columns
+        cols = st.columns(5)
         for j, word in enumerate(row_words):
             if word not in st.session_state.tab3_selected:
                 if cols[j].button(word, key=f"word_{i+j}"):
                     st.session_state.tab3_selected.append(word)
-                    st.session_state["tab3_trigger"] = True
-    
-
+                    st.session_state.tab3_trigger = True
 
     if st.session_state.tab3_trigger:
         st.session_state.tab3_trigger = False
         st.rerun()
 
     st.markdown("**문장 조립:**")
-    
+
     def smart_join(words):
         result = ""
         for i, word in enumerate(words):
             if i > 0 and re.match(r"[.,!?;]", word):
-                result += word  # attach punctuation directly
+                result += word
             else:
-                if result:  # add space before non-punctuation
+                if result:
                     result += " "
                 result += word
         return result
-    
+
     user_input = smart_join(st.session_state.tab3_selected)
-    
     st.write(user_input)
-    
 
-
-    # 🔧 정답 비교를 위한 정규화 함수
     def normalize(text):
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
     if st.button("정답 확인", key="check3"):
-        normalized_user = normalize(user_input)
-        normalized_answer = normalize(answer)
-
-        if normalized_user == normalized_answer:
+        if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-
 
     if st.button("다음 문장", key="next3"):
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
         st.rerun()
+
