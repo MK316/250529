@@ -35,7 +35,7 @@ with level1:
 
     row = df.iloc[st.session_state.tab1_index]
     st.markdown(f"**문장:** {row['Level_01']}")
-    st.caption("🐾 Meaning: " + str(row['Level_01_Meaning']))
+    st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
     choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
 
     if st.button("정답 확인", key="check1"):
@@ -85,7 +85,7 @@ with level2:
 
     st.markdown("**문장:**")
     st.markdown(question, unsafe_allow_html=True)
-    st.caption(🐾 Meaning: " + str(row['Level_02_Meaning']))
+    st.caption("🐾 Meaning: " + str(row['Level_02_Meaning']))
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
 
     if st.button("정답 확인", key="check2"):
