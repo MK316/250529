@@ -252,42 +252,33 @@ with level3:
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
     # 🔁 Setup once
-    if "show_balloons_tab3" not in st.session_state:
-        st.session_state.show_balloons_tab3 = False
-    if "just_finished_tab3" not in st.session_state:
-        st.session_state.just_finished_tab3 = False
+    if "tab3_balloon_ready" not in st.session_state:
+        st.session_state.tab3_balloon_ready = False
+    if "tab3_show_balloons_now" not in st.session_state:
+        st.session_state.tab3_show_balloons_now = False
     
     # ✅ 정답 확인 버튼
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
     
-            # ✅ Only if it's the final item
+            # ✅ If it's the last question
             if st.session_state.tab3_index == len(df) - 1:
-                st.session_state.show_balloons_tab3 = True
-                st.session_state.just_finished_tab3 = True  # flag to trigger on *next* rerun
-            else:
-                st.session_state.show_balloons_tab3 = False
-                st.session_state.just_finished_tab3 = False
+                st.session_state.tab3_balloon_ready = True  # mark for next rerun
+                st.rerun()
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-            st.session_state.show_balloons_tab3 = False
-            st.session_state.just_finished_tab3 = False
     
-    # ✅ Only trigger balloons if it's a post-correct rerun on the final question
-    if st.session_state.get("just_finished_tab3", False):
-        if st.session_state.get("show_balloons_tab3", False):
-            st.balloons()
-        # Reset flags so balloons don't appear again on click
-        st.session_state.just_finished_tab3 = False
-        st.session_state.show_balloons_tab3 = False
+    # ✅ After rerun: show balloons if flagged
+    if st.session_state.tab3_balloon_ready:
+        st.balloons()
+        st.session_state.tab3_balloon_ready = False  # prevent re-show
     
-    # ✅ 다음 문장 버튼
+    # ✅ 다음 문장
     if st.button("다음 문장", key="next3"):
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.session_state.show_balloons_tab3 = False
-        st.session_state.just_finished_tab3 = False
+        st.session_state.tab3_balloon_ready = False
         st.rerun()
