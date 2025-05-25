@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 # -------------------------
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data02.csv"
+    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
     df = pd.read_csv(url)
     df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
     return df.reset_index(drop=True)
@@ -20,6 +20,36 @@ if df.empty:
     st.error("❌ 사용할 수 있는 데이터가 없습니다.")
     st.stop()
 
+
+# -------------------------
+# Generate cloze sentence
+# -------------------------
+def make_cloze(sentence, focus):
+    focus = str(focus).strip()
+    if focus in sentence:
+        blank = " __ " if "," not in focus else " __ , __ "
+        return sentence.replace(focus, f"<u>{blank}</u>", 1)
+    return sentence
+
+# -------------------------
+# Create distractors
+# -------------------------
+def generate_options(correct):
+    all_choices = ['that', 'which', 'who', 'where']
+    if "," in correct:
+        parts = [p.strip() for p in correct.split(",")]
+        correct_combo = ", ".join(parts)
+        others = []
+        while len(others) < 3:
+            distractor = ", ".join(random.choices(all_choices, k=2))
+            if distractor != correct_combo and distractor not in others:
+                others.append(distractor)
+        options = others + [correct_combo]
+    else:
+        options = random.sample([opt for opt in all_choices if opt != correct], 3) + [correct]
+    random.shuffle(options)
+    return options
+    
 # -------------------------
 # 하이라이트 함수
 # -------------------------
@@ -95,4 +125,51 @@ with tab1:
         if st.button("➡️ 다음 문제"):
             st.session_state.current_index = random.randint(0, len(df) - 1)
             st.session_state.show_feedback = False
+            st.rerun()
+
+with tab2:
+    st.header("✏️ 관계대명사 빈칸 퀴즈 (Level 2)")
+    st.caption("문장의 빈칸에 들어갈 올바른 관계대명사를 고르세요.")
+    st.markdown("---")
+
+    if "tab2_index" not in st.session_state or st.session_state.tab2_index >= len(df):
+        st.session_state.tab2_index = random.randint(0, len(df) - 1)
+        st.session_state.tab2_feedback = False
+        st.session_state.tab2_choice = None
+
+    row = df.iloc[st.session_state.tab2_index]
+    sentence = row["Level_02"]
+    meaning = row["Level_02_Meaning"]
+    focus = row["Level_02_Focus"].strip()
+
+    # 만들기: cloze 문장 + 선택지
+    cloze_sentence = make_cloze(sentence, focus)
+    options = generate_options(focus)
+
+    # 문장 출력
+    st.markdown("#### 📌 문장 (빈칸 채우기):")
+    components.html(f"""
+        <div style='font-size:20px; font-family:sans-serif; line-height:1.5em;'>
+            {cloze_sentence}
+        </div>
+    """, height=100)
+
+    st.caption(f"📘 해석: {meaning}")
+
+    # 선택지
+    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options, key=f"tab2_choice_{st.session_state.tab2_index}")
+
+    if st.button("✅ 정답 확인", key="check_tab2"):
+        st.session_state.tab2_feedback = True
+        st.session_state.tab2_choice = user_answer
+
+    if st.session_state.tab2_feedback:
+        if st.session_state.tab2_choice == focus or st.session_state.tab2_choice.replace(" ","") == focus.replace(" ",""):
+            st.success("🎉 정답입니다!")
+        else:
+            st.error("❌ 아쉽네요. 정답은: " + focus)
+
+        if st.button("➡️ 다음 문제", key="next_tab2"):
+            st.session_state.tab2_index = random.randint(0, len(df) - 1)
+            st.session_state.tab2_feedback = False
             st.rerun()
