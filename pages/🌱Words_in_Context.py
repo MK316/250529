@@ -37,23 +37,17 @@ vocab_dict = {
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
-
-
-# Sort vocab
+# Sort the vocab
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# Display word buttons using dynamic JS for page-safe redirection
-st.markdown("### 📘 Click a word to learn")
+# ✅ Render HTML Buttons
+st.markdown("### 📘 Click a word")
 
-# Build the HTML for inline buttons (wrapped and clickable)
-button_html = """
-<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
-"""
-
+buttons_html = """<div style='display: flex; flex-wrap: wrap; gap: 10px;'>"""
 for word in sorted_vocab:
-    encoded = urllib.parse.quote(word)
-    button_html += f"""
-    <button onclick="window.location.href=window.location.pathname + '?word={encoded}'"
+    encoded_word = urllib.parse.quote(word)
+    buttons_html += f"""
+    <button onclick="window.location.href = window.location.pathname + '?word={encoded_word}'"
         style="
         padding: 10px 16px;
         font-size: 16px;
@@ -62,36 +56,39 @@ for word in sorted_vocab:
         background-color: #f9f9f9;
         cursor: pointer;">{word}</button>
     """
+buttons_html += "</div>"
 
-button_html += "</div>"
+components.html(buttons_html, height=300)
 
-# Render buttons with JS click behavior
-components.html(button_html, height=300)
-
-# Handle selection from query parameter
-query_params = st.query_params.
+# ✅ Handle Query Parameter
+query_params = st.query_params
 selected_word = query_params.get("word", [None])[0]
 
-# Show info if selected
 if selected_word and selected_word in sorted_vocab:
     meaning, sentence = sorted_vocab[selected_word]
 
-    # Word TTS
+    # Generate English TTS for word
     tts_word = gTTS(text=selected_word, lang='en')
     audio_word = BytesIO()
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
 
-    # Sentence TTS
+    # Generate English TTS for sentence
     tts_sentence = gTTS(text=sentence, lang='en')
     audio_sentence = BytesIO()
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
+    # Display result
     st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
+
     st.markdown("🔈 **Word Pronunciation**")
     st.audio(audio_word, format="audio/mp3")
+
     st.markdown("🗣️ **Sentence Audio**")
+    st.audio(audio_sentence, format="audio/mp3")
+
+
     st.audio(audio_sentence, format="audio/mp3")
