@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import random
 import re
+import streamlit.components.v1 as components  # ✅ HTML 출력을 위해 필요
 
 # -------------------------
 # 1. 데이터 로드 함수
@@ -20,16 +21,15 @@ if df.empty:
     st.stop()
 
 # -------------------------
-# 2. 강조 함수 정의
+# 2. 포커스 단어 하이라이트 함수
 # -------------------------
 def highlight_focus(sentence, focus):
     focus = str(focus).strip()
     if not focus or focus.lower() not in sentence.lower():
-        return sentence  # focus 단어가 문장에 없으면 원문 그대로 반환
+        return sentence  # focus 단어가 없으면 원문 반환
 
     try:
         escaped_focus = re.escape(focus)
-        # 알파벳 단어는 단어 경계, 쉼표·기호 포함이면 전체 일치
         pattern = re.compile(rf'\b{escaped_focus}\b' if focus.isalpha() else escaped_focus, re.IGNORECASE)
         highlighted = pattern.sub(
             f"<span style='color:red; font-weight:bold'>{focus}</span>",
@@ -37,7 +37,7 @@ def highlight_focus(sentence, focus):
             count=1
         )
         return highlighted
-    except Exception:
+    except:
         return sentence
 
 # -------------------------
@@ -50,7 +50,7 @@ tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 # -------------------------
 with tab1:
     st.header("📝 관계대명사 문장 연습 (Level 1)")
-    st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
+    st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요. 🔍 총 10개의 문장을 연습합니다.")
     st.markdown("---")
 
     # 인덱스 초기화
@@ -67,12 +67,17 @@ with tab1:
     meaning = row["Level_01_Meaning"]
     focus = str(row.get("Level_01_Focus", "")).strip()
 
-    # 🔴 문장 강조
+    # 🔴 문장 강조 처리
     highlighted_sentence = highlight_focus(sentence, focus)
 
-    # 문제 출력
+    # ✅ 문장 출력 (정확한 스타일 렌더링을 위해 components.html 사용)
     st.markdown("#### 📌 문장:")
-    st.markdown(f"<p style='font-size:20px'>{highlighted_sentence}</p>", unsafe_allow_html=True)
+    components.html(f"""
+        <div style='font-size:20px; font-family:Arial, sans-serif; line-height:1.5em'>
+            {highlighted_sentence}
+        </div>
+    """, height=60)
+
     st.caption(f"📘 해석: {meaning if pd.notna(meaning) else '해석이 제공되지 않았습니다.'}")
     st.markdown("---")
 
