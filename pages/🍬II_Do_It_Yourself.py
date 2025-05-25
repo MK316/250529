@@ -119,12 +119,31 @@ with level3:
        st.session_state.tab3_shuffled = random.sample(words, len(words))
 
     st.caption(meaning)
-    cols = st.columns(len(st.session_state.tab3_shuffled))
+
+    ## NEw
+    st.markdown("### 👉 단어를 클릭하세요:")
     for i, word in enumerate(st.session_state.tab3_shuffled):
         if word not in st.session_state.tab3_selected:
-            if cols[i].button(word, key=f"word_{i}"):
+            if st.button(f"{word}", key=f"word_{i}"):
                 st.session_state.tab3_selected.append(word)
-                st.session_state.tab3_trigger = True
+                st.session_state["tab3_trigger"] = True
+    
+    # Use CSS to control layout
+    st.markdown(
+        """
+        <style>
+        button[kind="secondary"] {
+            white-space: normal !important;
+            height: auto !important;
+            line-height: 1.2;
+            padding: 0.5em 1em;
+            font-size: 1.1em;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
     if st.session_state.tab3_trigger:
         st.session_state.tab3_trigger = False
