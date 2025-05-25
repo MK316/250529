@@ -3,6 +3,7 @@ import streamlit as st
 from gtts import gTTS
 from io import BytesIO
 import streamlit.components.v1 as components
+import urllib.parse
 
 # 🔡 Vocabulary Dictionary: word → (Korean meaning, example sentence)
 vocab_dict = {
