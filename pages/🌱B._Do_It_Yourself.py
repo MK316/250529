@@ -209,9 +209,9 @@ with level3:
         st.session_state.tab3_shuffled = random.sample(words, len(words))
 
     st.markdown("---")
-    st.caption("🐾 해석: " + meaning)
-    st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
 
+    st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
+    st.caption("🐾 해석: " + meaning)
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
