@@ -2,6 +2,7 @@
 import streamlit as st
 from gtts import gTTS
 from io import BytesIO
+import streamlit.components.v1 as components
 
 # 🔡 Vocabulary Dictionary: word → (Korean meaning, example sentence)
 vocab_dict = {
@@ -42,7 +43,6 @@ sorted_vocab = dict(sorted(vocab_dict.items()))
 st.set_page_config(page_title="Word Practice", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
-# 🔘 Display each word as a button in rows
 # 💡 Add inline-flex CSS for layout
 st.markdown("""
     <style>
@@ -50,9 +50,12 @@ st.markdown("""
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        margin-bottom: 20px;
     }
-    .word-box-container .stButton {
-        margin: 2px;
+    .word-box-container .stButton>button {
+        padding: 8px 16px;
+        font-size: 16px;
+        border-radius: 8px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -65,25 +68,6 @@ for word in sorted_vocab.keys():
         st.session_state.selected_word = word
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-
-for word in sorted_vocab.keys():
-    button_clicked = st.button(word, key=f"btn_{word}")
-    if button_clicked:
-        st.session_state.selected_word = word
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-
-# Create a form to handle all buttons inside one block
-with st.form("word_buttons_form"):
-    selected = None
-    for word in sorted_vocab.keys():
-        if st.form_submit_button(label=word, key=word):
-            selected = word
-    if selected:
-        st.session_state.selected_word = selected
-
 
 # 🔊 When clicked
 if "selected_word" in st.session_state:
