@@ -98,6 +98,7 @@ with tab3:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
+        st.session_state.tab3_rerun_flag = False
 
     row = df.iloc[st.session_state.tab3_index]
     answer = row['Level_03']
@@ -112,8 +113,12 @@ with tab3:
         if word not in st.session_state.tab3_selected:
             if cols[i].button(word, key=f"word_{i}"):
                 st.session_state.tab3_selected.append(word)
-                st.session_state.tab3_trigger = True
+                st.session_state.tab3_rerun_flag = True
 
+    # 안전한 rerun 트리거
+    if st.session_state.tab3_rerun_flag:
+        st.session_state.tab3_rerun_flag = False
+        st.experimental_rerun()
 
     st.markdown("**문장 조립:**")
     st.write(" ".join(st.session_state.tab3_selected))
