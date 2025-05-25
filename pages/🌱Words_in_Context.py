@@ -39,29 +39,18 @@ vocab_dict = {
 
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
+# ✅ Page Layout
 st.set_page_config(page_title="Words in Context", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
-# --- Simulate inline layout using columns (6 per row) ---
-cols_per_row = 4
-row = st.columns(cols_per_row)
-col_index = 0
+# ✅ Dropdown to select a word
+selected_word = st.selectbox("Choose a word:", ["-- Select a word --"] + list(sorted_vocab.keys()))
 
-for word in sorted_vocab.keys():
-    if row[col_index].button(word):
-        st.session_state.selected_word = word
-    col_index += 1
-    if col_index == cols_per_row:
-        row = st.columns(cols_per_row)
-        col_index = 0
-
-# --- Display selected word info ---
-if "selected_word" in st.session_state:
-    word = st.session_state.selected_word
-    meaning, sentence = sorted_vocab[word]
+if selected_word != "-- Select a word --":
+    meaning, sentence = sorted_vocab[selected_word]
 
     # Generate TTS for word
-    tts_word = gTTS(text=word, lang='en')
+    tts_word = gTTS(text=selected_word, lang='en')
     audio_word = BytesIO()
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
@@ -72,11 +61,11 @@ if "selected_word" in st.session_state:
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
-    st.markdown(f"## ✅ {word}")
+    # ✅ Display content
+    st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
     st.markdown("🔈 **Word Pronunciation**")
     st.audio(audio_word, format="audio/mp3")
     st.markdown("🗣️ **Sentence Audio**")
-    st.audio(audio_sentence, format="audio/mp3")
     st.audio(audio_sentence, format="audio/mp3")
