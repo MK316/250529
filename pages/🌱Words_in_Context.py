@@ -62,7 +62,7 @@ html += "</div>"
 components.html(html, height=300)
 
 # Handle selection
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 selected_word = query_params.get("word", [None])[0]
 
 if selected_word and selected_word in sorted_vocab:
