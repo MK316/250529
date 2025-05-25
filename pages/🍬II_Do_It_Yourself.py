@@ -110,9 +110,10 @@ with tab3:
     cols = st.columns(len(st.session_state.tab3_shuffled))
     for i, word in enumerate(st.session_state.tab3_shuffled):
         if word not in st.session_state.tab3_selected:
-            if cols[i].button(word):
+            if cols[i].button(word, key=f"word_{i}"):
                 st.session_state.tab3_selected.append(word)
-                st.experimental_rerun()
+                st.session_state.tab3_trigger = True
+
 
     st.markdown("**문장 조립:**")
     st.write(" ".join(st.session_state.tab3_selected))
