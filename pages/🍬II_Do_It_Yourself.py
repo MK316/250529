@@ -67,20 +67,16 @@ st.caption(data["K"])
 def load_data():
     url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
     df = pd.read_csv(url)
-    df = df.dropna(subset=[
-        "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
-        "Level_02", "Level_02_Focus", "Level_02_Meaning",
-        "Level_03", "Level_03_Meaning"
-    ])
+    df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
     return df.reset_index(drop=True)
 
 df = load_data()
 
 # 탭 구성
-level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
+tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
 # Level 1
-with level1:
+with tab1:
     st.subheader("✅ 문장이 맞는지 판단하기")
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
@@ -104,7 +100,7 @@ with level1:
         st.experimental_rerun()
 
 # Level 2
-with level2:
+with tab2:
     st.subheader("✏️ 관계대명사 빈칸 채우기")
 
     def make_cloze(sentence, focus):
@@ -150,7 +146,7 @@ with level2:
         st.experimental_rerun()
 
 # Level 3
-with level3:
+with tab3:
     st.subheader("🧩 단어 배열 퀴즈")
 
     if "tab3_index" not in st.session_state:
