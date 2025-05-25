@@ -33,20 +33,6 @@ relative_pronouns = {
         "B": "You gave me the book.",
         "C": "I read the book **that you gave me**.",
         "K": "→ 나는 네가 준 책을 읽었어."
-    },
-    "where": {
-        "desc": "장소를 설명할 때 사용합니다.",
-        "A": "That is the place.",
-        "B": "We met at the place.",
-        "C": "That is the place **where we met**.",
-        "K": "→ 저곳이 우리가 만난 장소예요."
-    },
-    "when": {
-        "desc": "시간을 설명할 때 사용합니다.",
-        "A": "I remember the day.",
-        "B": "We met on that day.",
-        "C": "I remember the day **when we met**.",
-        "K": "→ 나는 우리가 만났던 날을 기억해요."
     }
 }
 data = relative_pronouns[target]
