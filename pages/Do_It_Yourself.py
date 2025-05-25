@@ -23,17 +23,33 @@ if df.empty:
 # -------------------------
 # Cloze 문장 생성
 # -------------------------
+
+
 def make_cloze(sentence, focus):
     focus = str(focus).strip()
+
     if "," in focus:
         parts = [p.strip() for p in focus.split(",")]
         new_sentence = sentence
         for part in parts:
-            # 첫 번째만 치환하도록 제한
-            new_sentence = new_sentence.replace(part, "<u> _____ </u>", 1)
+            # 다음 글자 확인을 위한 정규식 패턴
+            pattern = re.compile(rf"({re.escape(part)})(\W?)")
+            match = pattern.search(new_sentence)
+            if match:
+                punctuation = match.group(2)
+                # 단어 다음이면 공백 추가, 문장부호면 공백 없음
+                blank = "<u> _____ </u>" + (" " if punctuation == "" or punctuation.isspace() else "")
+                new_sentence = new_sentence.replace(match.group(0), blank + punctuation, 1)
         return new_sentence
     else:
-        return sentence.replace(focus, "<u> _____ </u>&nbsp;", 1)
+        # 단일 단어 처리
+        pattern = re.compile(rf"({re.escape(focus)})(\W?)")
+        match = pattern.search(sentence)
+        if match:
+            punctuation = match.group(2)
+            blank = "<u> _____ </u>" + (" " if punctuation == "" or punctuation.isspace() else "")
+            return sentence.replace(match.group(0), blank + punctuation, 1)
+        return sentence
 
 
 # -------------------------
