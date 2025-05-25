@@ -140,8 +140,21 @@ with level3:
         st.rerun()
 
     st.markdown("**문장 조립:**")
-    user_input = " ".join(st.session_state.tab3_selected)
+    def smart_join(words):
+        result = ""
+        for i, word in enumerate(words):
+            if i > 0 and re.match(r"[.,!?;]", word):
+                result += word  # attach punctuation directly
+            else:
+                if result:  # add space before non-punctuation
+                    result += " "
+                result += word
+        return result
+    
+    user_input = smart_join(st.session_state.tab3_selected)
+    st.markdown("**문장 조립:**")
     st.write(user_input)
+
 
     # 🔧 정답 비교를 위한 정규화 함수
     def normalize(text):
