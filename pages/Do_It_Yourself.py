@@ -27,7 +27,7 @@ if df.empty:
 def make_cloze(sentence, focus):
     focus = str(focus).strip()
     if focus in sentence:
-        blank = " __ " if "," not in focus else " __ , __ "
+        blank = " _____ " if "," not in focus else " _____ , _____ "
         return sentence.replace(focus, f"<u>{blank}</u>", 1)
     return sentence
 
