@@ -25,10 +25,15 @@ if df.empty:
 # -------------------------
 def make_cloze(sentence, focus):
     focus = str(focus).strip()
-    if focus in sentence:
-        blank = " _____ " if "," not in focus else " _____ , _____ "
-        return sentence.replace(focus, f"<u>{blank}</u> ", 1)  # ← 뒤에 공백 추가
-    return sentence
+    if "," in focus:
+        parts = [p.strip() for p in focus.split(",")]
+        new_sentence = sentence
+        for part in parts:
+            # 첫 번째만 치환하도록 제한
+            new_sentence = new_sentence.replace(part, "<u> _____ </u>", 1)
+        return new_sentence
+    else:
+        return sentence.replace(focus, "<u> _____ </u>", 1)
 
 
 # -------------------------
