@@ -21,6 +21,21 @@ def load_data():
 
 df = load_data()
 
+# ✅ Highlight the focus word in red
+def highlight_focus(sentence, focus):
+    if not sentence or not focus:
+        return sentence
+    try:
+        focus = str(focus).strip()
+        escaped_focus = re.escape(focus)
+        pattern = re.compile(rf'\b({escaped_focus})\b')
+        return pattern.sub(r"<span style='color:red; font-weight:bold'>\1</span>", sentence, count=1)
+    except:
+        return sentence
+
+
+
+
 # 탭 구성
 level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
@@ -29,15 +44,45 @@ level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 # -------------------------------
 with level1:
     st.subheader("🐥 문장이 맞는지 판단하기 (Level 1)")
+
+    # 🔧 인덱스 초기화
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
         st.session_state.tab1_score = 0
 
+    # ✅ Highlight function
+    def highlight_focus(sentence, focus):
+        if not sentence or not focus:
+            return sentence
+        try:
+            focus = str(focus).strip()
+            escaped_focus = re.escape(focus)
+            pattern = re.compile(rf'\b({escaped_focus})\b')
+            return pattern.sub(r"<span style='color:red; font-weight:bold'>\1</span>", sentence, count=1)
+        except:
+            return sentence
+
+    # 🔍 현재 문제 가져오기
     row = df.iloc[st.session_state.tab1_index]
-    st.markdown(f"**문장:** {row['Level_01']}")
+    sentence = row['Level_01']
+    focus = row['Level_01_Focus']
+    highlighted = highlight_focus(sentence, focus)
+
+    # ✅ 문장 출력 (하이라이트 포함)
+    st.markdown("**문장:**")
+    components.html(f"""
+        <div style='font-size:20px; font-family:sans-serif; line-height:1.6em;'>
+            {highlighted}
+        </div>
+    """, height=80)
+
+    # 🐾 해석
     st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
+
+    # ✅ 사용자 선택
     choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
 
+    # ✅ 정답 확인
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
             st.success("정답입니다!")
@@ -46,9 +91,11 @@ with level1:
             st.error("틀렸습니다.")
             st.info(f"👉 올바른 문장: {row['Level_01_Correct']}")
 
+    # ⏭️ 다음 문장
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
         st.rerun()
+
 
 # -------------------------------
 # ✏️ Level 2: 관계대명사 빈칸 채우기
