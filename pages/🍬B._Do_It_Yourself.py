@@ -182,6 +182,8 @@ with level3:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
+
+    if "tab3_trigger" not in st.session_state:
         st.session_state.tab3_trigger = False
 
     row = df.iloc[st.session_state.tab3_index]
