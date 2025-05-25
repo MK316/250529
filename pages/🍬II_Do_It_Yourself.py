@@ -124,16 +124,18 @@ with level3:
 
     ## NEw
     st.markdown("### 👉 단어를 클릭하세요:")
-# Arrange 5 word buttons per row
+
+# Arrange 5 word buttons per row (left-aligned if fewer than 5)
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
-        cols = st.columns(len(row_words))
+        cols = st.columns(5)  # Always create 5 columns
         for j, word in enumerate(row_words):
             if word not in st.session_state.tab3_selected:
                 if cols[j].button(word, key=f"word_{i+j}"):
                     st.session_state.tab3_selected.append(word)
                     st.session_state["tab3_trigger"] = True
+    
 
 
     if st.session_state.tab3_trigger:
