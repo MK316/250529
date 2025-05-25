@@ -1,0 +1,75 @@
+# 📦 Required Libraries
+import streamlit as st
+from gtts import gTTS
+import os
+from io import BytesIO
+import base64
+
+# 🔡 Vocabulary Dictionary: word → (Korean meaning, example sentence)
+vocab_dict = {
+    "Artificial Intelligence (AI)": ("인공지능", "This is the path that 'AI' followed."),
+    "artists": ("예술가들", "The AI, which mimics the style of the other artists, created the picture."),
+    "artworks": ("작품들", "The show had artworks that moved!"),
+    "built": ("지었다", "They built a machine that mimics artists."),
+    "consider": ("여기다, 고려하다", "We can see AI platforms and art that some viewers consider more impressive."),
+    "contemporary": ("현대의", "An incident occurred that thrilled the contemporary art scene."),
+    "creation": ("창조", "This pattern of AI creation is much like the path which is taken by major artists."),
+    "creativity": ("창의성", "Look at the mechanism of AI creativity, which is programmed to work in a similar way to human creativity."),
+    "developed": ("개발했다", "We are the engineers who developed that AI system."),
+    "engineers": ("엔지니어들", "We are the engineers who developed that AI system."),
+    "fake": ("가짜의", "The image, which went viral, was fake."),
+    "followed": ("따랐다", "This is the path that AI followed."),
+    "genius": ("천재적인", "The idea, which came from a cat video, was genius."),
+    "impressive": ("인상적인", "We can see AI platforms and art that some viewers consider more impressive."),
+    "incident": ("사건", "An incident occurred that thrilled the contemporary art scene."),
+    "insist": ("주장하다", "There are those who insist that AI is more than a tool."),
+    "machine": ("기계", "The machine learns by itself, which is done through a machine learning."),
+    "major": ("주요한", "This pattern of AI creation is much like the path which is taken by major artists."),
+    "mechanism": ("기계 장치, 구조", "Look at the mechanism of AI creativity, which is programmed to work in a similar way to human creativity."),
+    "million": ("백만", "A portrait that is created by AI was sold for nearly half a million dollars."),
+    "mimics": ("흉내내다", "They built a machine that mimics artists."),
+    "occurred": ("발생했다", "An incident occurred that thrilled the contemporary art scene."),
+    "path": ("길", "This is the path that AI followed."),
+    "platforms": ("플랫폼들", "We can see AI platforms and art that some viewers consider more impressive."),
+    "portrait": ("초상화", "A portrait that is created by AI was sold for nearly half a million dollars."),
+    "presented": ("제시했다", "They presented a video that showed the AI's production process."),
+    "production": ("생산", "They presented a video that showed the AI's production process."),
+    "programmed": ("프로그래밍된", "Look at the mechanism of AI creativity, which is programmed to work in a similar way to human creativity."),
+    "robots": ("로봇들", "I met a guy who teaches robots to draw."),
+    "scene": ("현장", "An incident occurred that thrilled the contemporary art scene."),
+    "sketch": ("스케치하다", "Here's a program that learns to sketch."),
+    "tech": ("기술", "The style, which feels old, is made by new tech."),
+    "thrilled": ("흥분시켰다", "An incident occurred that thrilled the contemporary art scene."),
+    "viewers": ("관객", "We can see AI platforms and art that some viewers consider more impressive."),
+    "viral": ("입소문 난", "The image, which went viral, was fake."),
+}
+
+# 🧠 Sort alphabetically
+sorted_vocab = dict(sorted(vocab_dict.items()))
+
+# 🎨 App UI
+st.set_page_config(page_title="Word Practice", layout="wide")
+st.title("🎧 Vocabulary Practice with Audio and Meaning")
+
+# 🔘 Display each word as a button in rows
+cols = st.columns(6)
+for i, word in enumerate(sorted_vocab.keys()):
+    if cols[i % 6].button(word):
+        st.session_state.selected_word = word
+
+# 🔊 When clicked
+if "selected_word" in st.session_state:
+    word = st.session_state.selected_word
+    meaning, sentence = sorted_vocab[word]
+
+    # Generate TTS
+    tts = gTTS(text=word, lang='en')
+    mp3_fp = BytesIO()
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+
+    # Display word + meaning + sentence + audio
+    st.markdown(f"## ✅ {word}")
+    st.markdown(f"**Korean**: {meaning}")
+    st.markdown(f"**Example**: _{sentence}_")
+    st.audio(mp3_fp, format="audio/mp3")
