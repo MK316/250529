@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import random
+import re
 
 # -------------------------
 # 1. 데이터 로드 함수
@@ -19,7 +20,28 @@ if df.empty:
     st.stop()
 
 # -------------------------
-# 2. 탭 구성
+# 2. 강조 함수 정의
+# -------------------------
+def highlight_focus(sentence, focus):
+    focus = str(focus).strip()
+    if not focus or focus.lower() not in sentence.lower():
+        return sentence  # focus 단어가 문장에 없으면 원문 그대로 반환
+
+    try:
+        escaped_focus = re.escape(focus)
+        # 알파벳 단어는 단어 경계, 쉼표·기호 포함이면 전체 일치
+        pattern = re.compile(rf'\b{escaped_focus}\b' if focus.isalpha() else escaped_focus, re.IGNORECASE)
+        highlighted = pattern.sub(
+            f"<span style='color:red; font-weight:bold'>{focus}</span>",
+            sentence,
+            count=1
+        )
+        return highlighted
+    except Exception:
+        return sentence
+
+# -------------------------
+# 3. 탭 구성
 # -------------------------
 tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
@@ -28,6 +50,8 @@ tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 # -------------------------
 with tab1:
     st.header("📝 관계대명사 문장 연습 (Level 1)")
+    st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
+    st.markdown("---")
 
     # 인덱스 초기화
     if "current_index" not in st.session_state or st.session_state.current_index >= len(df):
@@ -37,29 +61,18 @@ with tab1:
 
     # 현재 문제 불러오기
     row = df.iloc[st.session_state.current_index]
-
     sentence = str(row["Level_01"])
     correct_answer = row["Answer1"]
     correction = row["Level_01_Correct"]
     meaning = row["Level_01_Meaning"]
     focus = str(row.get("Level_01_Focus", "")).strip()
 
-    # 🔴 Focus 단어 강조 (최초 1회만 치환)
-    if focus and focus in sentence:
-        sentence_highlighted = sentence.replace(
-            focus, f"<span style='color:red; font-weight:bold'>{focus}</span>", 1
-        )
-    else:
-        sentence_highlighted = sentence
+    # 🔴 문장 강조
+    highlighted_sentence = highlight_focus(sentence, focus)
 
-    # 문제 문장 출력
-    st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
-    st.markdown("---")
-    # 문장 출력 (HTML로 스타일 적용)
+    # 문제 출력
     st.markdown("#### 📌 문장:")
-    st.markdown(f"<p style='font-size:20px'>{sentence_highlighted}</p>", unsafe_allow_html=True)
-    
-
+    st.markdown(f"<p style='font-size:20px'>{highlighted_sentence}</p>", unsafe_allow_html=True)
     st.caption(f"📘 해석: {meaning if pd.notna(meaning) else '해석이 제공되지 않았습니다.'}")
     st.markdown("---")
 
@@ -75,7 +88,7 @@ with tab1:
         st.session_state.user_choice = user_choice
         st.session_state.show_feedback = True
 
-    # 피드백
+    # 피드백 출력
     if st.session_state.show_feedback:
         if st.session_state.user_choice == correct_answer:
             st.success("✅ 정답입니다!")
