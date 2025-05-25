@@ -81,11 +81,12 @@ with level1:
 
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
-            st.success("정답입니다!")
-            st.session_state.tab1_score += 1
+            st.success("✅ 정답입니다!")
         else:
-            st.error("틀렸습니다.")
-            st.info(f"👉 올바른 문장: {row['Level_01_Correct']}")
+            st.error("❌ 틀렸습니다.")
+        
+        st.markdown("**📘 올바른 문장:**")
+        st.info(row['Level_01_Correct'])
 
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
