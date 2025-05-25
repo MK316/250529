@@ -92,6 +92,7 @@ with level1:
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
             st.success("✅ 정답입니다!")
+            st.balloons()
         else:
             st.error("❌ 틀렸습니다.")
         st.markdown("**📘 올바른 문장:**")
@@ -170,6 +171,7 @@ with level2:
     if st.session_state.tab2_feedback:
         if st.session_state.tab2_user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
             st.success("🎉 정답입니다!")
+            st.balloons()
         else:
             st.error(f"❌ 정답은: {row['Level_02_Focus']}")
 
@@ -252,6 +254,7 @@ with level3:
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
+            st.balloons()
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
