@@ -15,7 +15,7 @@ target = st.selectbox("관계대명사 선택", ["who", "which", "that"])
 relative_pronouns = {
     "who": {
         "desc": "사람을 부가하여 설명할 때 사용합니다.",
-        "A": "This is a boy.",
+        "A": "This is the boy.",
         "B": "The boy won the prize.",
         "C": "This is the boy **who won the prize**.",
         "K": "→ 이 소년은 상을 받은 소년이에요."
