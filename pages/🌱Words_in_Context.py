@@ -40,15 +40,23 @@ vocab_dict = {
 # Sort alphabetically
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# ✅ Corrected HTML for inline, page-aware buttons
+# --- Render HTML Buttons (Inline + Click Support) ---
 st.markdown("### 📘 Click a word")
 
-button_html = "<div style='display: flex; flex-wrap: wrap; gap: 10px;'>"
+# Use JS to read full URL and append query safely
+html_buttons = """
+<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
+<script>
+function goToWord(word) {
+  const base = window.location.href.split("?")[0];
+  window.location.href = base + "?word=" + encodeURIComponent(word);
+}
+</script>
+"""
+
 for word in sorted_vocab:
-    encoded_word = urllib.parse.quote(word)
-    button_html += f"""
-    <button onclick="window.location.href = window.location.href.split('?')[0] + '?word={encoded_word}'"
-        style="
+    html_buttons += f"""
+    <button onclick="goToWord('{word}')" style="
         padding: 10px 16px;
         font-size: 16px;
         border: 1px solid #ccc;
@@ -56,14 +64,17 @@ for word in sorted_vocab:
         background-color: #f9f9f9;
         cursor: pointer;">{word}</button>
     """
-button_html += "</div>"
 
-components.html(button_html, height=300)
+html_buttons += "</div>"
 
-# ✅ Handle selected word
+# Render buttons via Streamlit component
+components.html(html_buttons, height=300)
+
+# --- Handle Query Parameter (Get Selected Word) ---
 query_params = st.query_params
 selected_word = query_params.get("word", [None])[0]
 
+# --- Show Word Info ---
 if selected_word and selected_word in sorted_vocab:
     meaning, sentence = sorted_vocab[selected_word]
 
@@ -79,12 +90,11 @@ if selected_word and selected_word in sorted_vocab:
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
+    # Display
     st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
-
     st.markdown("🔈 **Word Pronunciation**")
     st.audio(audio_word, format="audio/mp3")
-
     st.markdown("🗣️ **Sentence Audio**")
     st.audio(audio_sentence, format="audio/mp3")
