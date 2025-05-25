@@ -28,7 +28,7 @@ def make_cloze(sentence, focus):
     focus = str(focus).strip()
     if focus in sentence:
         blank = " _____ " if "," not in focus else " _____ , _____ "
-        return sentence.replace(focus, f"<u>{blank}</u>", 1)
+        return sentence.replace(focus, f"<u>{blank} </u>", 1)
     return sentence
 
 # -------------------------
