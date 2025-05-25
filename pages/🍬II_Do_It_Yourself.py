@@ -89,6 +89,10 @@ with level1:
         st.session_state.show_hint1 = True
 
     if st.session_state.get("show_hint1", False):
+        def prepare_text_for_tts(text):
+            return re.sub(r'\bAI\b', 'A I', text)
+
+        correct_sentence_for_tts = prepare_text_for_tts(correct_sentence)
         tts = gTTS(text=correct_sentence, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
             tts.save(fp.name)
