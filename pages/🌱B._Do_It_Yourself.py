@@ -57,14 +57,13 @@ with level1:
 
     st.caption(f"🔢 진행 상황: {st.session_state.tab1_index + 1} / {len(df)} 문장")
 
-    st.markdown("**문장:**")
     components.html(f"""
         <div style='font-size:20px; font-family:sans-serif; line-height:1.6em;'>
             {highlighted}
         </div>
     """, height=80)
 
-    st.caption("🐾 해석석: " + row['Level_01_Meaning'])
+    st.caption("🐾 해석: " + row['Level_01_Meaning'])
 
     if st.button("💡 Hint 보기 (정답 듣기)"):
         st.session_state.show_hint1 = True
