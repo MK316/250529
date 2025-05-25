@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="관계대명사 배우기", layout="centered")
-st.markdown("##📘 관계대명사 배우기")
+st.markdown("## 📘 관계대명사 배우기")
 
 # --- 드롭다운 선택 ---
 st.markdown("### ✨ 학습할 관계대명사를 선택하세요:")
