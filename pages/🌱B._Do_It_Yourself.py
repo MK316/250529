@@ -257,23 +257,25 @@ with level3:
     if "just_checked_tab3" not in st.session_state:
         st.session_state.just_checked_tab3 = False
     
-    # ✅ 정답 확인 버튼
+    # ✅ Show answer button
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
-            st.session_state.show_balloons = True
+            st.session_state.show_balloons = True  # 🎈 Set flag
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-            st.session_state.show_balloons = False
-        
-        # Mark this rerun as a result of checking the answer
-        st.session_state.just_checked_tab3 = True
-        st.rerun()  # trigger rerun to separate feedback from input
+            st.session_state.show_balloons = False  # make sure not to show
     
-    # ✅ Trigger balloons on rerun *only if answer was just checked*
-    if st.session_state.get("just_checked_tab3", False):
-        if st.session_state.get("show_balloons", False):
-            st.balloons()
-        st.session_state.just_checked_tab3 = False  # reset after display
-
+    # ✅ Balloon trigger after feedback is shown
+    if st.session_state.get("show_balloons", False):
+        st.balloons()
+        st.session_state.show_balloons = False  # reset after showing
+    
+    # ✅ Move to next
+    if st.button("다음 문장", key="next3"):
+        st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
+        st.session_state.tab3_selected = []
+        st.session_state.tab3_shuffled = []
+        st.session_state.show_balloons = False  # make sure it's cleared
+        st.rerun()
