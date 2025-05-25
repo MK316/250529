@@ -77,147 +77,113 @@ def load_data():
 df = load_data()
 
 # 탭 구성
-tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
+level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
-# -------------------------
-# ✅ TAB 1
-# -------------------------
-with tab1:
-    st.header("🐣 관계대명사 문장 연습 (Level 1)")
-    st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요.")
-    st.markdown("---")
+# Level 1
+with level1:
+    st.subheader("✅ 문장이 맞는지 판단하기")
+    if "tab1_index" not in st.session_state:
+        st.session_state.tab1_index = 0
+        st.session_state.tab1_score = 0
 
-    if "completed_tab1" not in st.session_state:
-        st.session_state.completed_tab1 = set()
+    row = df.iloc[st.session_state.tab1_index]
+    st.markdown(f"**문장:** {row['Level_01']}")
+    st.caption(row['Level_01_Meaning'])
+    choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
 
-    remaining_tab1 = [i for i in range(len(df)) if i not in st.session_state.completed_tab1]
-
-    if not remaining_tab1:
-        st.success("🎉 모든 문제를 완료했습니다!")
-        st.stop()
-
-    st.markdown(f"**남은 문제 수: {len(remaining_tab1)}**")
-
-    if "current_index" not in st.session_state or st.session_state.current_index not in remaining_tab1:
-        st.session_state.current_index = random.choice(remaining_tab1)
-        st.session_state.show_feedback = False
-        st.session_state.user_choice = None
-
-    row = df.iloc[st.session_state.current_index]
-    sentence = str(row["Level_01"])
-    correct_answer = row["Answer1"]
-    correction = row["Level_01_Correct"]
-    meaning = row["Level_01_Meaning"]
-    focus = str(row.get("Level_01_Focus", "")).strip()
-
-    highlighted_sentence = highlight_focus(sentence, focus)
-
-    st.markdown("#### 📌 문장:")
-    components.html(f"""
-    <div style='font-size:22px; font-family:sans-serif; line-height:1.5em;'>
-        {highlighted_sentence}
-    </div>
-    """, height=120)
-
-    st.caption(f"📘 해석: {meaning}")
-    st.markdown("---")
-
-    user_choice = st.radio("이 문장은 문법적으로 맞나요?", ["Correct", "Incorrect"],
-                           key=f"choice_{st.session_state.current_index}")
-
-    if st.button("✅ 정답 확인"):
-        st.session_state.user_choice = user_choice
-        st.session_state.show_feedback = True
-
-    if st.session_state.show_feedback:
-        if st.session_state.user_choice == correct_answer:
-            st.success("✅ 정답입니다!")
-            st.session_state.completed_tab1.add(st.session_state.current_index)
+    if st.button("정답 확인", key="check1"):
+        if choice == row['Answer1']:
+            st.success("정답입니다!")
+            st.session_state.tab1_score += 1
         else:
-            st.error("❌ 틀렸어요.")
+            st.error("틀렸습니다.")
+            st.info(f"👉 올바른 문장: {row['Level_01_Correct']}")
 
-        st.markdown("**👉 올바른 문장:**")
-        st.info(correction if pd.notna(correction) else "정답 문장이 없습니다.")
+    if st.button("다음 문장", key="next1"):
+        st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
+        st.experimental_rerun()
 
-        if st.button("➡️ 다음 문제"):
-            remaining_tab1 = [i for i in range(len(df)) if i not in st.session_state.completed_tab1]
-            if remaining_tab1:
-                st.session_state.current_index = random.choice(remaining_tab1)
-                st.session_state.show_feedback = False
-                st.rerun()
+# Level 2
+with level2:
+    st.subheader("✏️ 관계대명사 빈칸 채우기")
 
-# -------------------------
-# ✅ TAB 2: Cloze 퀴즈 with 복습
-# -------------------------
-with tab2:
-    st.header("🐸 관계대명사 빈칸 퀴즈 (Level 2)")
-    st.caption("문장의 빈칸에 들어갈 올바른 관계대명사를 고르세요.")
-    st.markdown("---")
+    def make_cloze(sentence, focus):
+        parts = [p.strip() for p in focus.split(",")] if "," in focus else [focus.strip()]
+        for p in parts:
+            sentence = re.sub(rf"\\b{re.escape(p)}\\b", "<u>_____</u>", sentence, 1)
+        return sentence
 
-    if "tab2_correct_ids" not in st.session_state:
-        st.session_state.tab2_correct_ids = set()
-
-    all_tab2_ids = list(range(len(df)))
-    unanswered_tab2_ids = [i for i in all_tab2_ids if i not in st.session_state.tab2_correct_ids]
-
-    st.markdown(f"**남은 문제 수: {len(unanswered_tab2_ids)}**")
-
-    if not unanswered_tab2_ids:
-        st.success("🎉 모든 문제를 완료했습니다!")
-        st.stop()
-
-    if "tab2_index" not in st.session_state or st.session_state.tab2_index not in unanswered_tab2_ids:
-        if st.session_state.tab2_wrong_ids:
-            st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
+    def generate_options(correct):
+        base = ['that', 'which', 'who', 'where']
+        if "," in correct:
+            correct = ", ".join([c.strip() for c in correct.split(",")])
+            distractors = []
+            while len(distractors) < 3:
+                combo = ", ".join(random.choices(base, k=2))
+                if combo != correct and combo not in distractors:
+                    distractors.append(combo)
+            return random.sample(distractors + [correct], 4)
         else:
-            st.session_state.tab2_index = random.choice(unanswered_tab2_ids)
+            distractors = [x for x in base if x != correct]
+            return random.sample(distractors, 3) + [correct]
+
+    if "tab2_index" not in st.session_state:
+        st.session_state.tab2_index = 0
 
     row = df.iloc[st.session_state.tab2_index]
-    sentence = row["Level_02"]
-    meaning = row["Level_02_Meaning"]
-    focus = row["Level_02_Focus"].strip()
+    question = make_cloze(row['Level_02'], row['Level_02_Focus'])
+    options = generate_options(row['Level_02_Focus'])
 
-    if "tab2_options" not in st.session_state:
-        st.session_state.tab2_options = generate_options(focus)
-        st.session_state.tab2_feedback = False
-        st.session_state.tab2_choice = None
+    st.markdown(f"**문장:**")
+    st.markdown(question, unsafe_allow_html=True)
+    st.caption(row['Level_02_Meaning'])
+    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
 
-    cloze_sentence = make_cloze(sentence, focus)
-    options = st.session_state.tab2_options
-
-    st.markdown("#### 📌 문장 (빈칸 채우기):")
-    components.html(f"""
-        <div style='font-size:20px; font-family:sans-serif; line-height:1.5em;'>
-            {cloze_sentence}
-        </div>
-    """, height=100)
-
-    st.caption(f"📘 해석: {meaning}")
-
-    user_answer = st.radio("빈 칸에 어떤 관계대명사가 들어가는 게 가장 좋을까요?", options,
-                           key=f"tab2_choice_{st.session_state.tab2_index}")
-
-    if st.button("✅ 정답 확인", key="check_tab2"):
-        st.session_state.tab2_feedback = True
-        st.session_state.tab2_choice = user_answer
-
-    if st.session_state.tab2_feedback:
-        if st.session_state.tab2_choice.replace(" ", "") == focus.replace(" ", ""):
+    if st.button("정답 확인", key="check2"):
+        if user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
             st.success("🎉 정답입니다!")
-            st.session_state.tab2_correct_ids.add(st.session_state.tab2_index)
-            st.session_state.tab2_wrong_ids.discard(st.session_state.tab2_index)
         else:
-            st.error(f"❌ 아쉽네요. 정답은: {focus}")
-            st.session_state.tab2_wrong_ids.add(st.session_state.tab2_index)
+            st.error(f"❌ 정답은: {row['Level_02_Focus']}")
 
-        if st.button("➡️ 다음 문제", key="next_tab2"):
-            unanswered_tab2_ids = [i for i in range(len(df)) if i not in st.session_state.tab2_correct_ids]
-            if unanswered_tab2_ids:
-                if st.session_state.tab2_wrong_ids:
-                    st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
-                else:
-                    st.session_state.tab2_index = random.choice(unanswered_tab2_ids)
-                new_row = df.iloc[st.session_state.tab2_index]
-                st.session_state.tab2_options = generate_options(new_row['Level_02_Focus'].strip())
-                st.session_state.tab2_feedback = False
-                st.rerun()
+    if st.button("다음 문장", key="next2"):
+        st.session_state.tab2_index = (st.session_state.tab2_index + 1) % len(df)
+        st.experimental_rerun()
+
+# Level 3
+with level3:
+    st.subheader("🧩 단어 배열 퀴즈")
+
+    if "tab3_index" not in st.session_state:
+        st.session_state.tab3_index = 0
+        st.session_state.tab3_selected = []
+        st.session_state.tab3_shuffled = []
+
+    row = df.iloc[st.session_state.tab3_index]
+    answer = row['Level_03']
+    meaning = row['Level_03_Meaning']
+
+    if not st.session_state.tab3_shuffled:
+        st.session_state.tab3_shuffled = random.sample(answer.split(), len(answer.split()))
+
+    st.caption(meaning)
+    cols = st.columns(len(st.session_state.tab3_shuffled))
+    for i, word in enumerate(st.session_state.tab3_shuffled):
+        if word not in st.session_state.tab3_selected:
+            if cols[i].button(word):
+                st.session_state.tab3_selected.append(word)
+                st.experimental_rerun()
+
+    st.markdown("**문장 조립:**")
+    st.write(" ".join(st.session_state.tab3_selected))
+
+    if st.button("정답 확인", key="check3"):
+        if " ".join(st.session_state.tab3_selected) == answer:
+            st.success("🎉 정답입니다!")
+        else:
+            st.error("❌ 틀렸어요. 다시 시도해 보세요.")
+
+    if st.button("다음 문장", key="next3"):
+        st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
+        st.session_state.tab3_selected = []
+        st.session_state.tab3_shuffled = []
+        st.experimental_rerun()
