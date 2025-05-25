@@ -184,7 +184,7 @@ with tab2:
 
     st.caption(f"📘 해석: {meaning}")
 
-    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options,
+    user_answer = st.radio("빈 칸에 어떤 관계대명사가 들어가는 게 가장 좋을까요?", options,
                            key=f"tab2_choice_{st.session_state.tab2_index}")
 
     if st.button("✅ 정답 확인", key="check_tab2"):
