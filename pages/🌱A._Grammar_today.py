@@ -50,12 +50,12 @@ st.info(data["desc"])
 
 st.markdown("**🔸 두 문장:**")
 st.markdown(f"- A: {data['A']}")
-st.image(data["imgA"], caption="A", use_column_width=True)
+st.image(data["imgA"], caption="A", width=200)
 
 st.markdown(f"- B: {data['B']}")
-st.image(data["imgB"], caption="B", use_column_width=True)
+st.image(data["imgB"], caption="B", width=200)
 
 st.markdown("**🔸 결합된 문장:**")
 st.success(f"{data['C']}")
 st.caption(data["K"])
-st.image(data["imgC"], caption="A + B", use_column_width=True)
+st.image(data["imgC"], caption="A + B", width=200)
