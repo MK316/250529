@@ -43,10 +43,36 @@ st.set_page_config(page_title="Word Practice", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
 # 🔘 Display each word as a button in rows
-cols = st.columns(5)
-for i, word in enumerate(sorted_vocab.keys()):
-    if cols[i % 5].button(word):
-        st.session_state.selected_word = word
+# Custom CSS for inline buttons
+st.markdown("""
+<style>
+.word-box {
+    display: inline-block;
+    margin: 6px 6px 6px 0;
+}
+.word-box button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+.word-box button:hover {
+    background-color: #e0e0e0;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Create a form to handle all buttons inside one block
+with st.form("word_buttons_form"):
+    selected = None
+    for word in sorted_vocab.keys():
+        if st.form_submit_button(label=word, key=word):
+            selected = word
+    if selected:
+        st.session_state.selected_word = selected
+
 
 # 🔊 When clicked
 if "selected_word" in st.session_state:
