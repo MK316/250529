@@ -122,27 +122,16 @@ with level3:
 
     ## NEw
     st.markdown("### 👉 단어를 클릭하세요:")
-    for i, word in enumerate(st.session_state.tab3_shuffled):
-        if word not in st.session_state.tab3_selected:
-            if st.button(f"{word}", key=f"word_{i}"):
-                st.session_state.tab3_selected.append(word)
-                st.session_state["tab3_trigger"] = True
-    
-    # Use CSS to control layout
-    st.markdown(
-        """
-        <style>
-        button[kind="secondary"] {
-            white-space: normal !important;
-            height: auto !important;
-            line-height: 1.2;
-            padding: 0.5em 1em;
-            font-size: 1.1em;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+# Arrange 5 word buttons per row
+    words = st.session_state.tab3_shuffled
+    for i in range(0, len(words), 5):
+        row_words = words[i:i+5]
+        cols = st.columns(len(row_words))
+        for j, word in enumerate(row_words):
+            if word not in st.session_state.tab3_selected:
+                if cols[j].button(word, key=f"word_{i+j}"):
+                    st.session_state.tab3_selected.append(word)
+                    st.session_state["tab3_trigger"] = True
 
 
     if st.session_state.tab3_trigger:
