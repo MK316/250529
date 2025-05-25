@@ -158,9 +158,11 @@ with level2:
     row = df.iloc[st.session_state.tab2_index]
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
 
+
     # Generate options only once per question
-    if not st.session_state.tab2_options:
+    if st.session_state.get("tab2_options") is None:
         st.session_state.tab2_options = generate_options(row['Level_02_Focus'])
+
 
     options = st.session_state.tab2_options
 
