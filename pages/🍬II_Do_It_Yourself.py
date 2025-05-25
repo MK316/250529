@@ -99,10 +99,10 @@ with level2:
         st.rerun()
 
 # -------------------------------
-# 🧩 Level 3: 단어 배열 퀴즈
+# 🐳 Level 3: 단어 배열 퀴즈
 # -------------------------------
 with level3:
-    st.subheader("🧩 단어 배열 퀴즈")
+    st.subheader("🐳 단어 배열 퀴즈 (Level 3)")
 
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
