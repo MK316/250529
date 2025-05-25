@@ -69,7 +69,7 @@ button_html += "</div>"
 components.html(button_html, height=300)
 
 # Handle selection from query parameter
-query_params = st.experimental_get_query_params()
+query_params = st.query_params.
 selected_word = query_params.get("word", [None])[0]
 
 # Show info if selected
