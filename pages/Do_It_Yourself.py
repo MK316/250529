@@ -23,25 +23,18 @@ if df.empty:
 # -------------------------
 # Cloze 문장 생성
 # -------------------------
-
-import re
-
 def make_cloze(sentence, focus):
     focus = str(focus).strip()
-
     if "," in focus:
         parts = [p.strip() for p in focus.split(",")]
         new_sentence = sentence
         for part in parts:
-            # 관계대명사 뒤에 공백이 없는 경우를 위한 정규식
             pattern = re.compile(rf"({re.escape(part)})(?=\W|\s|$)")
             match = pattern.search(new_sentence)
             if match:
                 start = match.start()
                 end = match.end()
                 next_char = new_sentence[end:end+1]
-
-                # 단어 다음엔 공백 필요
                 spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
                 new_sentence = new_sentence[:start] + "<u> _____ </u>" + spacing + new_sentence[end:]
         return new_sentence
@@ -55,8 +48,6 @@ def make_cloze(sentence, focus):
             spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
             return sentence[:start] + "<u> _____ </u>" + spacing + sentence[end:]
         return sentence
-
-
 
 # -------------------------
 # 보기를 생성
@@ -92,6 +83,12 @@ def highlight_focus(sentence, focus):
         )
     except:
         return sentence
+
+# -------------------------
+# 오답 기록 세션 초기화
+# -------------------------
+if "tab2_wrong_ids" not in st.session_state:
+    st.session_state.tab2_wrong_ids = set()
 
 # -------------------------
 # 탭 구성
@@ -152,32 +149,36 @@ with tab1:
             st.rerun()
 
 # -------------------------
-# ✅ TAB 2: Cloze 퀴즈
+# ✅ TAB 2: Cloze 퀴즈 with 복습
 # -------------------------
 with tab2:
     st.header("✏️ 관계대명사 빈칸 퀴즈 (Level 2)")
     st.caption("문장의 빈칸에 들어갈 올바른 관계대명사를 고르세요.")
     st.markdown("---")
 
-    # 새 문제일 때만 보기 생성
-    if "tab2_index" not in st.session_state or "tab2_options" not in st.session_state:
-        st.session_state.tab2_index = random.randint(0, len(df) - 1)
-        row = df.iloc[st.session_state.tab2_index]
-        focus = row["Level_02_Focus"].strip()
-        st.session_state.tab2_options = generate_options(focus)
-        st.session_state.tab2_feedback = False
-        st.session_state.tab2_choice = None
+    # 틀린 문제 리스트 활용하여 다음 index 설정
+    if "tab2_index" not in st.session_state:
+        if st.session_state.tab2_wrong_ids:
+            st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
+        else:
+            st.session_state.tab2_index = random.randint(0, len(df) - 1)
 
     row = df.iloc[st.session_state.tab2_index]
     sentence = row["Level_02"]
     meaning = row["Level_02_Meaning"]
     focus = row["Level_02_Focus"].strip()
+
+    if "tab2_options" not in st.session_state:
+        st.session_state.tab2_options = generate_options(focus)
+        st.session_state.tab2_feedback = False
+        st.session_state.tab2_choice = None
+
     cloze_sentence = make_cloze(sentence, focus)
     options = st.session_state.tab2_options
 
     st.markdown("#### 📌 문장 (빈칸 채우기):")
     components.html(f"""
-        <div style='font-size:20px; font-family:sans-serif; line-height:1 em;'>
+        <div style='font-size:20px; font-family:sans-serif; line-height:1.5em;'>
             {cloze_sentence}
         </div>
     """, height=100)
@@ -194,11 +195,18 @@ with tab2:
     if st.session_state.tab2_feedback:
         if st.session_state.tab2_choice.replace(" ", "") == focus.replace(" ", ""):
             st.success("🎉 정답입니다!")
+            # 정답 맞춘 경우 복습 리스트에서 제거
+            st.session_state.tab2_wrong_ids.discard(st.session_state.tab2_index)
         else:
             st.error(f"❌ 아쉽네요. 정답은: {focus}")
+            # 오답인 경우 다시 출제되도록 저장
+            st.session_state.tab2_wrong_ids.add(st.session_state.tab2_index)
 
         if st.button("➡️ 다음 문제", key="next_tab2"):
-            st.session_state.tab2_index = random.randint(0, len(df) - 1)
+            if st.session_state.tab2_wrong_ids:
+                st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
+            else:
+                st.session_state.tab2_index = random.randint(0, len(df) - 1)
             new_row = df.iloc[st.session_state.tab2_index]
             st.session_state.tab2_options = generate_options(new_row['Level_02_Focus'].strip())
             st.session_state.tab2_feedback = False
