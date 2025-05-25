@@ -47,8 +47,8 @@ data = relative_pronouns[target]
 st.markdown(f"### 🔹 관계대명사: **{target}**")
 st.info(data["desc"])
 
-st.markdown("**🔸 두 문장:**")
-col1, col2 = st.columns(2)
+st.markdown("**🔸 두 문장 + 결합된 문장:**")
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown(f"**A:** {data['A']}")
@@ -58,8 +58,8 @@ with col2:
     st.markdown(f"**B:** {data['B']}")
     st.image(data["imgB"], caption="B", width=150)
 
-# st.markdown("**🔸 결합된 문장:**")
-st.success(f"🔸 결합된 문장: {data['C']}")
-st.caption(data["K"])
-st.image(data["imgC"], caption="A + B", width=250)
+with col3:
+    st.markdown(f"**A + B:**<br>{data['C']}", unsafe_allow_html=True)
+    st.caption(data["K"])
+    st.image(data["imgC"], caption="Combined", width=150)
 
