@@ -15,7 +15,7 @@ target = st.selectbox("관계대명사 선택", ["who", "which", "that"])
 relative_pronouns = {
     "who": {
         "desc": "사람을 부가하여 설명할 때 사용합니다.",
-        "A": "This is the boy.",
+        "A": "This is a boy.",
         "B": "The boy won the prize.",
         "C": "This is the boy **who won the prize**.",
         "K": "→ 이 소년은 상을 받은 소년이에요."
@@ -29,7 +29,7 @@ relative_pronouns = {
     },
     "that": {
         "desc": "사람과 사물 모두 대신할 수 있으며 who/which 대신에 자주 사용됩니다.",
-        "A": "I read the book.",
+        "A": "I read a book.",
         "B": "You gave me the book.",
         "C": "I read the book **that you gave me**.",
         "K": "→ 나는 네가 준 책을 읽었어."
