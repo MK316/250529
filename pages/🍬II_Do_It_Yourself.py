@@ -28,7 +28,7 @@ level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 # ✅ Level 1: 문장 정답 판단
 # -------------------------------
 with level1:
-    st.subheader("✅ 문장이 맞는지 판단하기")
+    st.subheader("🐥 문장이 맞는지 판단하기 (Level 1)")
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
         st.session_state.tab1_score = 0
@@ -54,7 +54,7 @@ with level1:
 # ✏️ Level 2: 관계대명사 빈칸 채우기
 # -------------------------------
 with level2:
-    st.subheader("✏️ 관계대명사 빈칸 채우기")
+    st.subheader("🐸 관계대명사 빈칸 채우기 (Level 2)")
 
     def make_cloze(sentence, focus):
         parts = [p.strip() for p in focus.split(",")] if "," in focus else [focus.strip()]
