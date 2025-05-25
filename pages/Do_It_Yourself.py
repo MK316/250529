@@ -9,7 +9,7 @@ import streamlit.components.v1 as components
 # -------------------------
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data01.csv"
+    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data02.csv"
     df = pd.read_csv(url)
     df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
     return df.reset_index(drop=True)
