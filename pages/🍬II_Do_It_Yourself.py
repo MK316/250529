@@ -153,7 +153,7 @@ with level3:
         return result
     
     user_input = smart_join(st.session_state.tab3_selected)
-    st.markdown("**문장 조립:**")
+
     st.write(user_input)
 
 
