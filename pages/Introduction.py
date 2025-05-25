@@ -22,12 +22,47 @@ st.markdown("""
 # --- 예문 ---
 st.markdown("### 2. 예문 보기")
 
-examples = {
-    "This is the boy **who** won the prize.": "→ 이 소년은 상을 받은 소년이에요.",
-    "I read the book **that** you gave me.": "→ 나는 네가 준 책을 읽었어.",
-    "She lives in a house **which** has a red roof.": "→ 그녀는 빨간 지붕이 있는 집에 살아요.",
-    "That is the place **where** we met.": "→ 저곳이 우리가 만난 장소예요."
-}
+st.markdown("### 2. 예문 보기")
+
+# 예문 목록 (원문1, 원문2, 결합문, 해석)
+examples = [
+    {
+        "title": "🔹 관계대명사 **who**",
+        "original": ["This is the boy.", "The boy won the prize."],
+        "combined": "This is the boy **who won the prize**.",
+        "meaning": "→ 이 소년은 상을 받은 소년이에요."
+    },
+    {
+        "title": "🔹 관계대명사 **that**",
+        "original": ["I read the book.", "You gave me the book."],
+        "combined": "I read the book **that you gave me**.",
+        "meaning": "→ 나는 네가 준 책을 읽었어."
+    },
+    {
+        "title": "🔹 관계대명사 **which**",
+        "original": ["She lives in a house.", "The house has a red roof."],
+        "combined": "She lives in a house **which has a red roof**.",
+        "meaning": "→ 그녀는 빨간 지붕이 있는 집에 살아요."
+    },
+    {
+        "title": "🔹 관계대명사 **where**",
+        "original": ["That is the place.", "We met at the place."],
+        "combined": "That is the place **where we met**.",
+        "meaning": "→ 저곳이 우리가 만난 장소예요."
+    }
+]
+
+# 화면에 표시
+for ex in examples:
+    st.markdown(f"**{ex['title']}**")
+    st.markdown("🔸 원래 문장:")
+    for sentence in ex['original']:
+        st.markdown(f"- {sentence}")
+    st.markdown("🔸 결합된 문장:")
+    st.success(f"👉 {ex['combined']}")
+    st.caption(ex['meaning'])
+    st.markdown("---")
+
 
 for en, kr in examples.items():
     st.markdown(f"- {en}")
