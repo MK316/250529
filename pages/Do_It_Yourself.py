@@ -46,7 +46,7 @@ with tab1:
     # 문제 문장
     st.markdown("**주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-)**")
     st.caption("총 10개의 문장을 연습합니다.")
-    st.markdown(f"### \"{sentence}\"")
+    st.markdown(f"#### \"{sentence}\"")
 
     # 해석은 항상 보여줌
     st.markdown("**📘 해석:**")
