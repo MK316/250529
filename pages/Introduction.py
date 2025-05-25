@@ -13,7 +13,7 @@ target = st.selectbox(
 # --- 관계대명사별 설명 및 예문 데이터 ---
 relative_pronouns = {
     "who": {
-        "desc": "사람을 주어 또는 보어로 설명할 때 사용합니다.",
+        "desc": "사람을 부가하여 설명할 때 사용합니다.",
         "A": "This is the boy.",
         "B": "The boy won the prize.",
         "C": "This is the boy **who won the prize**.",
