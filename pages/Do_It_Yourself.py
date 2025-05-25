@@ -33,7 +33,7 @@ def make_cloze(sentence, focus):
             new_sentence = new_sentence.replace(part, "<u> _____ </u>", 1)
         return new_sentence
     else:
-        return sentence.replace(focus, "<u> _____ </u>", 1)
+        return sentence.replace(focus, "<u> _____ </u>&nbsp;", 1)
 
 
 # -------------------------
