@@ -251,38 +251,43 @@ with level3:
     def normalize(text):
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
-    # ✅ Initialize state flags
-    if "show_balloons" not in st.session_state:
-        st.session_state.show_balloons = False
-    if "tab3_completed" not in st.session_state:
-        st.session_state.tab3_completed = False
+    # 🔁 Setup once
+    if "show_balloons_tab3" not in st.session_state:
+        st.session_state.show_balloons_tab3 = False
+    if "just_finished_tab3" not in st.session_state:
+        st.session_state.just_finished_tab3 = False
     
-    # ✅ Show answer check button
+    # ✅ 정답 확인 버튼
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
     
-            # ✅ If this is the last item, show balloons
-            if st.session_state.tab3_index + 1 == len(df):
-                st.session_state.show_balloons = True
-                st.session_state.tab3_completed = True
+            # ✅ Only if it's the final item
+            if st.session_state.tab3_index == len(df) - 1:
+                st.session_state.show_balloons_tab3 = True
+                st.session_state.just_finished_tab3 = True  # flag to trigger on *next* rerun
+            else:
+                st.session_state.show_balloons_tab3 = False
+                st.session_state.just_finished_tab3 = False
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
+            st.session_state.show_balloons_tab3 = False
+            st.session_state.just_finished_tab3 = False
     
-    # ✅ Show balloons only when quiz is completed
-    if st.session_state.get("tab3_completed", False) and st.session_state.get("show_balloons", False):
-        st.balloons()
-        st.session_state.show_balloons = False
-        st.session_state.tab3_completed = False  # reset to prevent repeat
+    # ✅ Only trigger balloons if it's a post-correct rerun on the final question
+    if st.session_state.get("just_finished_tab3", False):
+        if st.session_state.get("show_balloons_tab3", False):
+            st.balloons()
+        # Reset flags so balloons don't appear again on click
+        st.session_state.just_finished_tab3 = False
+        st.session_state.show_balloons_tab3 = False
     
-    # ✅ Move to next question
+    # ✅ 다음 문장 버튼
     if st.button("다음 문장", key="next3"):
-        if st.session_state.tab3_index + 1 < len(df):
-            st.session_state.tab3_index += 1
-        else:
-            st.session_state.tab3_index = 0  # optional: loop back to start
+        st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
+        st.session_state.show_balloons_tab3 = False
+        st.session_state.just_finished_tab3 = False
         st.rerun()
-
