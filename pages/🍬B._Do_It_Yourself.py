@@ -219,6 +219,7 @@ with level3:
         st.rerun()
 
     st.markdown("**문장 조립:**")
+    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
     def smart_join(words):
         result = ""
         for i, word in enumerate(words):
@@ -233,7 +234,7 @@ with level3:
     user_input = smart_join(st.session_state.tab3_selected)
     
     st.write(user_input)
-    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
+    
 
 
     # 🔧 정답 비교를 위한 정규화 함수
