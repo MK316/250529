@@ -47,11 +47,11 @@ with tab1:
     st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
     st.markdown("---")
     st.markdown(f"#### {sentence}")
+    st.caption(meaning if pd.notna(meaning) else "해석이 제공되지 않았습니다.")
     st.markdown("---")
 
-    # 해석은 항상 보여줌
-    st.markdown("**📘 해석:**")
-    st.caption(meaning if pd.notna(meaning) else "해석이 제공되지 않았습니다.")
+
+
 
     # 사용자 선택
     user_choice = st.radio(
