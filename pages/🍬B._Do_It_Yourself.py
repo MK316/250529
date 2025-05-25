@@ -168,6 +168,9 @@ with level2:
 
     # Display question
     st.markdown("**문장:**")
+    if "tab3_index" not in st.session_state:
+    st.session_state.tab3_index = 0
+
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
     st.markdown(question, unsafe_allow_html=True)
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
@@ -199,11 +202,13 @@ with level2:
 # -------------------------------
 with level3:
     st.subheader("🐳 단어 배열 퀴즈 (Level 3)")
-    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
     if "tab3_index" not in st.session_state:
         st.session_state.tab3_index = 0
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
+        st.session_state.tab3_trigger = False
+
+    st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
 
     if "tab3_trigger" not in st.session_state:
         st.session_state.tab3_trigger = False
