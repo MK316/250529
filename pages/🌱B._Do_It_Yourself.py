@@ -86,7 +86,7 @@ with level1:
             """
             st.markdown(audio_html, unsafe_allow_html=True)
 
-    choice = st.radio("Q: 문장이 맞나요?", ["Correct", "Incorrect"])
+    choice = st.radio("Q: 주어진 문장이 문법에 맞을까요?", ["Correct", "Incorrect"])
 
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
