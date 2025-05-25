@@ -106,12 +106,12 @@ with level1:
 # ✏️ Level 2: 관계대명사 빈칸 채우기
 # -------------------------------
 with level2:
-    st.subheader("🐸 관계대명사 빈칸 채우기 (Level 2)")
+    st.subheader("🐸 관계대명사 빈칸 채워기 (Level 2)")
 
     def make_cloze(sentence, focus):
         parts = [p.strip() for p in focus.split(",")] if "," in focus else [focus.strip()]
         for p in parts:
-            sentence = re.sub(rf"\b{re.escape(p)}\b", "<u>_____</u>", sentence, 1)
+            sentence = re.sub(rf"(?<!<)\b{re.escape(p)}\b", "<u>_____</u>", sentence, 1)
         return sentence
 
     def generate_options(correct):
@@ -165,6 +165,7 @@ with level2:
         st.session_state.tab2_user_answer = None
         st.session_state.tab2_options = []
         st.rerun()
+
 
 # -------------------------------
 # 🐳 Level 3: 단어 배열 퀴즈
