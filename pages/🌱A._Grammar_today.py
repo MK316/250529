@@ -15,7 +15,7 @@ relative_pronouns = {
         "A": "This is a boy.",
         "B": "The boy won the prize.",
         "C": "This is the boy **who won the prize**.",
-        "K": "→ 이 소년은 상을 받은 소년이에요.",
+        "K": "→ 이 소년이 상을 받은 그 소년이에요.",
         "imgA": "https://github.com/MK316/250529/raw/main/images/who-01.jpg",
         "imgB": "https://github.com/MK316/250529/raw/main/images/who-02.jpg",
         "imgC": "https://github.com/MK316/250529/raw/main/images/who-03.jpg"
