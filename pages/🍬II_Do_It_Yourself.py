@@ -37,7 +37,7 @@ def highlight_focus(sentence, focus):
 
 
 # 탭 구성
-level1, level2, level3 = st.tabs(["Level 1", "Level 2", "Level 3"])
+level1, level2, level3 = st.tabs(["🌀 Level 1", "🌀 Level 2", "🌀 Level 3"])
 
 # -------------------------------
 # ✅ Level 1: 문장 정답 판단
