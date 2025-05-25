@@ -114,11 +114,10 @@ with level2:
             if len(parts) == 2:
                 part1, part2 = parts
                 sentence = re.sub(rf"\b{re.escape(part1)}\b", "<u>_____</u>", sentence, 1)
-                sentence = re.sub(rf"(?<=, )\b{re.escape(part2)}\b", "<u>_____</u>", sentence, 1)
+                sentence = re.sub(rf"\b{re.escape(part2)}\b", "<u>_____</u>", sentence, 1)
         else:
             sentence = re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, 1)
         return sentence
-
 
     def generate_options(correct):
         base = ['that', 'which', 'who', 'where']
