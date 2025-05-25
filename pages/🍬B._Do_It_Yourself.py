@@ -114,17 +114,17 @@ with level2:
     
         focus = focus.strip()
     
-        # Case 1: comma-separated focus (e.g., "that, which")
+        # Case 1: comma-separated focus like "that, which"
         if "," in focus:
             parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
                 first, second = parts
-                # Replace second first if it appears later in the sentence
+                # Replace both in order, second first to avoid overlap
                 sentence = re.sub(rf"\b{re.escape(second)}\b", "<u>_____</u>", sentence, count=1)
                 sentence = re.sub(rf"\b{re.escape(first)}\b", "<u>_____</u>", sentence, count=1)
                 return sentence
     
-        # Case 2: just ", which" or ", is"
+        # Case 2: punctuation + word, like ", is"
         if re.match(r"^,\s*\w+$", focus):
             word = focus.replace(",", "").strip()
             return re.sub(r",\s*" + re.escape(word), ", <u>_____</u> " + word, sentence, count=1)
