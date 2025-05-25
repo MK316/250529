@@ -4,95 +4,79 @@ import random
 import re
 import streamlit.components.v1 as components
 
-# -------------------------
-# 데이터 로드
-# -------------------------
+st.set_page_config(page_title="관계대명사 배우기", layout="centered")
+st.title("📘 관계대명사 배우기")
+
+# --- 드롭다운 선택 ---
+st.subheader("1. 학습할 관계대명사를 선택하세요:")
+target = st.selectbox("관계대명사 선택", ["who", "which", "that", "where", "when"])
+
+# --- 관계대명사별 설명 및 예문 ---
+relative_pronouns = {
+    "who": {
+        "desc": "사람을 부가하여 설명할 때 사용합니다.",
+        "A": "This is the boy.",
+        "B": "The boy won the prize.",
+        "C": "This is the boy **who won the prize**.",
+        "K": "→ 이 소년은 상을 받은 소년이에요."
+    },
+    "which": {
+        "desc": "사물이나 동물을 설명할 때 사용합니다.",
+        "A": "She lives in a house.",
+        "B": "The house has a red roof.",
+        "C": "She lives in a house **which has a red roof**.",
+        "K": "→ 그녀는 빨간 지붕이 있는 집에 살아요."
+    },
+    "that": {
+        "desc": "사람과 사물 모두 대신할 수 있으며 who/which 대신에 자주 사용됩니다.",
+        "A": "I read the book.",
+        "B": "You gave me the book.",
+        "C": "I read the book **that you gave me**.",
+        "K": "→ 나는 네가 준 책을 읽었어."
+    },
+    "where": {
+        "desc": "장소를 설명할 때 사용합니다.",
+        "A": "That is the place.",
+        "B": "We met at the place.",
+        "C": "That is the place **where we met**.",
+        "K": "→ 저곳이 우리가 만난 장소예요."
+    },
+    "when": {
+        "desc": "시간을 설명할 때 사용합니다.",
+        "A": "I remember the day.",
+        "B": "We met on that day.",
+        "C": "I remember the day **when we met**.",
+        "K": "→ 나는 우리가 만났던 날을 기억해요."
+    }
+}
+data = relative_pronouns[target]
+
+st.markdown(f"### 🔹 관계대명사: **{target}**")
+st.info(data["desc"])
+st.markdown("**🔸 두 문장:**")
+st.markdown(f"- A: {data['A']}")
+st.markdown(f"- B: {data['B']}")
+st.markdown("**🔸 결합된 문장:**")
+st.success(f"{data['C']}")
+st.caption(data["K"])
+
+# ---------------------
+# 🧠 퀴즈 앱 통합 (Level 1~3)
+# ---------------------
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
     df = pd.read_csv(url)
-    df = df.dropna(subset=["Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning"])
+    df = df.dropna(subset=[
+        "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
+        "Level_02", "Level_02_Focus", "Level_02_Meaning",
+        "Level_03", "Level_03_Meaning"
+    ])
     return df.reset_index(drop=True)
 
 df = load_data()
 
-if df.empty:
-    st.error("❌ 사용할 수 있는 데이터가 없습니다.")
-    st.stop()
-
-# -------------------------
-# Cloze 문장 생성
-# -------------------------
-def make_cloze(sentence, focus):
-    focus = str(focus).strip()
-    if "," in focus:
-        parts = [p.strip() for p in focus.split(",")]
-        new_sentence = sentence
-        for part in parts:
-            pattern = re.compile(rf"({re.escape(part)})(?=\W|\s|$)")
-            match = pattern.search(new_sentence)
-            if match:
-                start = match.start()
-                end = match.end()
-                next_char = new_sentence[end:end+1]
-                spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
-                new_sentence = new_sentence[:start] + "<u> _____ </u>" + spacing + new_sentence[end:]
-        return new_sentence
-    else:
-        pattern = re.compile(rf"({re.escape(focus)})(?=\W|\s|$)")
-        match = pattern.search(sentence)
-        if match:
-            start = match.start()
-            end = match.end()
-            next_char = sentence[end:end+1]
-            spacing = "&nbsp;" if next_char not in [",", ".", ";", ":", "!", "?", ""] else ""
-            return sentence[:start] + "<u> _____ </u>" + spacing + sentence[end:]
-        return sentence
-
-# -------------------------
-# 보기를 생성
-# -------------------------
-def generate_options(correct):
-    all_choices = ['that', 'which', 'who', 'where']
-    if "," in correct:
-        parts = [p.strip() for p in correct.split(",")]
-        correct_combo = ", ".join(parts)
-        others = []
-        while len(others) < 3:
-            distractor = ", ".join(random.choices(all_choices, k=2))
-            if distractor != correct_combo and distractor not in others:
-                others.append(distractor)
-        options = others + [correct_combo]
-    else:
-        options = random.sample([opt for opt in all_choices if opt != correct], 3) + [correct]
-    random.shuffle(options)
-    return options
-
-# -------------------------
-# 포커스 강조 함수
-# -------------------------
-def highlight_focus(sentence, focus):
-    focus = str(focus).strip()
-    if not focus or focus.lower() not in sentence.lower():
-        return sentence
-    try:
-        escaped_focus = re.escape(focus)
-        pattern = re.compile(rf'\b{escaped_focus}\b' if focus.isalpha() else escaped_focus, re.IGNORECASE)
-        return pattern.sub(
-            f"<span style='color:red; font-weight:bold'>{focus}</span>", sentence, count=1
-        )
-    except:
-        return sentence
-
-# -------------------------
-# 오답 기록 세션 초기화
-# -------------------------
-if "tab2_wrong_ids" not in st.session_state:
-    st.session_state.tab2_wrong_ids = set()
-
-# -------------------------
 # 탭 구성
-# -------------------------
 tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
 # -------------------------
