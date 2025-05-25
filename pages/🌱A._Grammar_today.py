@@ -22,7 +22,7 @@ relative_pronouns = {
     },
     "which": {
         "desc": "사물이나 동물을 설명할 때 사용합니다.",
-        "A": "She lives in a house.",
+        "A": "She lives in the house.",
         "B": "The house has a red roof.",
         "C": "She lives in a house **which has a red roof**.",
         "K": "→ 그녀는 빨간 지붕이 있는 집에 살아요."
