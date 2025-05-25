@@ -113,10 +113,12 @@ with level2:
             parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
                 part1, part2 = parts
-                sentence = re.sub(rf"\b{re.escape(part1)}\b", "<u>_____</u>", sentence, 1)
-                sentence = re.sub(rf"\b{re.escape(part2)}\b", "<u>_____</u>", sentence, 1)
+                # Replace the first relative pronoun normally
+                sentence = re.sub(rf"\\b{re.escape(part1)}\\b", "<u>_____</u>", sentence, 1)
+                # For second part, ensure it follows a comma and space
+                sentence = re.sub(rf"(,\s*){re.escape(part2)}\\b", r"\1<u>_____</u>", sentence, 1)
         else:
-            sentence = re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, 1)
+            sentence = re.sub(rf"\\b{re.escape(focus)}\\b", "<u>_____</u>", sentence, 1)
         return sentence
 
     def generate_options(correct):
