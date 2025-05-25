@@ -27,7 +27,7 @@ tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 # ✅ TAB 1: Level 1 퀴즈
 # -------------------------
 with tab1:
-    st.header("📝 문장 연습 (Level 1)")
+    st.header("📝 관계대명사 문장 연습 (Level 1)")
 
     # 인덱스 초기화
     if "current_index" not in st.session_state or st.session_state.current_index >= len(df):
