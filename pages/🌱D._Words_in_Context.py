@@ -69,8 +69,8 @@ if selected_word != "-- Select a word --":
     # ✅ Display content
     st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**💛 의미**: {meaning}")
-    st.markdown(f"**💛 예문**: _{sentence}_")
     st.markdown("💙 **단어 발음 듣기**")
     st.audio(audio_word, format="audio/mp3")
+    st.markdown(f"**💛 예문**: _{sentence}_")
     st.markdown("💙 **단어포함 문장 듣기**")
     st.audio(audio_sentence, format="audio/mp3")
