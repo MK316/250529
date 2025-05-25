@@ -35,7 +35,7 @@ relative_pronouns = {
         "A": "I read a book.",
         "B": "You gave me the book.",
         "C": "I read the book **that you gave me**.",
-        "K": "→ 나는 네가 준 책을 읽었어.",
+        "K": "→ 나는 네가 나에게 준 그 책을 읽었어.",
         "imgA": "https://github.com/MK316/250529/raw/main/images/that-01.jpg",
         "imgB": "https://github.com/MK316/250529/raw/main/images/that-02.jpg",
         "imgC": "https://github.com/MK316/250529/raw/main/images/that-03.jpg"
