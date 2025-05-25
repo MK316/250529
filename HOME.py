@@ -10,4 +10,4 @@ st.markdown("---")
 st.markdown("### Come on in through QR code")
 
 url2="https://github.com/MK316/250529/raw/main/images/0529qr.jpg"
-st.image(url)
+st.image(url2)
