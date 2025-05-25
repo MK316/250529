@@ -177,7 +177,7 @@ with tab2:
 
     st.markdown("#### 📌 문장 (빈칸 채우기):")
     components.html(f"""
-        <div style='font-size:20px; font-family:sans-serif; line-height:1.5em;'>
+        <div style='font-size:20px; font-family:sans-serif; line-height:1 em;'>
             {cloze_sentence}
         </div>
     """, height=100)
