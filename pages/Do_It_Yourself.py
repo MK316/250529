@@ -55,8 +55,10 @@ with tab1:
     # 문제 문장 출력
     st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
     st.markdown("---")
-    st.markdown(f"#### 📌 문장:")
+    # 문장 출력 (HTML로 스타일 적용)
+    st.markdown("#### 📌 문장:")
     st.markdown(f"<p style='font-size:20px'>{sentence_highlighted}</p>", unsafe_allow_html=True)
+    
 
     st.caption(f"📘 해석: {meaning if pd.notna(meaning) else '해석이 제공되지 않았습니다.'}")
     st.markdown("---")
