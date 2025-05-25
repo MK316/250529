@@ -41,10 +41,10 @@ sorted_vocab = dict(sorted(vocab_dict.items()))
 
 # ✅ Page Layout
 st.set_page_config(page_title="Words in Context", layout="wide")
-st.title("🎧 Vocabulary Practice with Audio and Meaning")
+st.markdown("### 🎧 Vocabulary Practice with Audio and Meaning")
 
 # ✅ Dropdown to select a word
-selected_word = st.selectbox("학습할 단어를 선택하세요:", ["-- Select a word --"] + list(sorted_vocab.keys()))
+selected_word = st.selectbox("👉 학습할 단어를 선택하세요:", ["-- Select a word --"] + list(sorted_vocab.keys()))
 
 if selected_word != "-- Select a word --":
     meaning, sentence = sorted_vocab[selected_word]
