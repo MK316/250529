@@ -86,7 +86,7 @@ with level1:
             """
             st.markdown(audio_html, unsafe_allow_html=True)
 
-    choice = st.radio("문장이 맞나요?", ["Correct", "Incorrect"])
+    choice = st.radio("Q: 문장이 맞나요?", ["Correct", "Incorrect"])
 
     if st.button("정답 확인", key="check1"):
         if choice == row['Answer1']:
@@ -160,7 +160,7 @@ with level2:
 
     st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
 
-    user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
+    user_answer = st.radio("Q: 어떤 관계대명사가 들어갈까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
 
     if st.button("정답 확인", key="check2"):
         st.session_state.tab2_user_answer = user_answer
