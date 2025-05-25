@@ -2,17 +2,15 @@ import streamlit as st
 import pandas as pd
 import random
 
-# Load CSV data
+# 데이터 로드
 @st.cache_data
 def load_data():
-    # 로컬 또는 GitHub 경로로 교체 가능
     url="https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data01.csv"
     df = pd.read_csv(url)  # 실제 파일 경로로 수정
-    return df
 
 df = load_data()
 
-# 탭 구조 만들기
+# 탭 구성
 tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 
 # ------------------------
@@ -21,22 +19,31 @@ tab1, tab2, tab3 = st.tabs(["Level 1", "Level 2", "Level 3"])
 with tab1:
     st.header("📝 Level 1 문장 퀴즈")
 
-    # 무작위로 하나의 행 선택
-    random_row = df.sample(1).iloc[0]
+    # 초기화: 문제 번호 저장
+    if "current_index" not in st.session_state:
+        st.session_state.current_index = random.randint(0, len(df) - 1)
+        st.session_state.show_feedback = False
+        st.session_state.user_choice = None
 
-    sentence = random_row["Level_01"]
-    correct_answer = random_row["Answer1"]  # "Correct" or "Incorrect"
-    correction = random_row["Level_01_Correct"]
-    meaning = random_row["Level_01_Meaning"]
+    row = df.iloc[st.session_state.current_index]
 
-    # 문제 표시
-    st.markdown(f"**문장을 보고 맞는 문장인지 판단하세요:**")
+    sentence = row["Level_01"]
+    correct_answer = row["Answer1"]  # "Correct" or "Incorrect"
+    correction = row["Level_01_Correct"]
+    meaning = row["Level_01_Meaning"]
+
+    st.markdown("**문장을 보고 맞는 문장인지 판단하세요:**")
     st.markdown(f"### \"{sentence}\"")
 
-    user_choice = st.radio("이 문장은 문법적으로 맞나요?", ["Correct", "Incorrect"])
+    st.session_state.user_choice = st.radio("이 문장은 문법적으로 맞나요?", ["Correct", "Incorrect"], index=0)
 
-    if st.button("정답 확인"):
-        if user_choice == correct_answer:
+    # 정답 확인 버튼
+    if st.button("✅ 정답 확인"):
+        st.session_state.show_feedback = True
+
+    # 피드백 표시
+    if st.session_state.show_feedback:
+        if st.session_state.user_choice == correct_answer:
             st.success("✅ 정답입니다!")
         else:
             st.error("❌ 틀렸어요.")
@@ -45,3 +52,9 @@ with tab1:
 
         st.markdown("**📘 해석:**")
         st.caption(meaning)
+
+        # 다음 문제 버튼
+        if st.button("➡️ 다음 문제"):
+            st.session_state.current_index = random.randint(0, len(df) - 1)
+            st.session_state.show_feedback = False
+            st.rerun()
