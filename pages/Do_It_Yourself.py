@@ -27,8 +27,9 @@ def make_cloze(sentence, focus):
     focus = str(focus).strip()
     if focus in sentence:
         blank = " _____ " if "," not in focus else " _____ , _____ "
-        return sentence.replace(focus, f"<u>{blank}</u>", 1)
+        return sentence.replace(focus, f"<u>{blank}</u> ", 1)  # ← 뒤에 공백 추가
     return sentence
+
 
 # -------------------------
 # 보기를 생성
