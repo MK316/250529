@@ -103,8 +103,19 @@ with tab1:
     st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요.")
     st.markdown("---")
 
-    if "current_index" not in st.session_state or st.session_state.current_index >= len(df):
-        st.session_state.current_index = random.randint(0, len(df) - 1)
+    if "completed_tab1" not in st.session_state:
+        st.session_state.completed_tab1 = set()
+
+    remaining_tab1 = [i for i in range(len(df)) if i not in st.session_state.completed_tab1]
+
+    if not remaining_tab1:
+        st.success("🎉 모든 문제를 완료했습니다!")
+        st.stop()
+
+    st.markdown(f"**남은 문제 수: {len(remaining_tab1)}**")
+
+    if "current_index" not in st.session_state or st.session_state.current_index not in remaining_tab1:
+        st.session_state.current_index = random.choice(remaining_tab1)
         st.session_state.show_feedback = False
         st.session_state.user_choice = None
 
@@ -137,6 +148,7 @@ with tab1:
     if st.session_state.show_feedback:
         if st.session_state.user_choice == correct_answer:
             st.success("✅ 정답입니다!")
+            st.session_state.completed_tab1.add(st.session_state.current_index)
         else:
             st.error("❌ 틀렸어요.")
 
@@ -144,9 +156,11 @@ with tab1:
         st.info(correction if pd.notna(correction) else "정답 문장이 없습니다.")
 
         if st.button("➡️ 다음 문제"):
-            st.session_state.current_index = random.randint(0, len(df) - 1)
-            st.session_state.show_feedback = False
-            st.rerun()
+            remaining_tab1 = [i for i in range(len(df)) if i not in st.session_state.completed_tab1]
+            if remaining_tab1:
+                st.session_state.current_index = random.choice(remaining_tab1)
+                st.session_state.show_feedback = False
+                st.rerun()
 
 # -------------------------
 # ✅ TAB 2: Cloze 퀴즈 with 복습
@@ -156,12 +170,23 @@ with tab2:
     st.caption("문장의 빈칸에 들어갈 올바른 관계대명사를 고르세요.")
     st.markdown("---")
 
-    # 틀린 문제 리스트 활용하여 다음 index 설정
-    if "tab2_index" not in st.session_state:
+    if "tab2_correct_ids" not in st.session_state:
+        st.session_state.tab2_correct_ids = set()
+
+    all_tab2_ids = list(range(len(df)))
+    unanswered_tab2_ids = [i for i in all_tab2_ids if i not in st.session_state.tab2_correct_ids]
+
+    st.markdown(f"**남은 문제 수: {len(unanswered_tab2_ids)}**")
+
+    if not unanswered_tab2_ids:
+        st.success("🎉 모든 문제를 완료했습니다!")
+        st.stop()
+
+    if "tab2_index" not in st.session_state or st.session_state.tab2_index not in unanswered_tab2_ids:
         if st.session_state.tab2_wrong_ids:
             st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
         else:
-            st.session_state.tab2_index = random.randint(0, len(df) - 1)
+            st.session_state.tab2_index = random.choice(unanswered_tab2_ids)
 
     row = df.iloc[st.session_state.tab2_index]
     sentence = row["Level_02"]
@@ -195,19 +220,20 @@ with tab2:
     if st.session_state.tab2_feedback:
         if st.session_state.tab2_choice.replace(" ", "") == focus.replace(" ", ""):
             st.success("🎉 정답입니다!")
-            # 정답 맞춘 경우 복습 리스트에서 제거
+            st.session_state.tab2_correct_ids.add(st.session_state.tab2_index)
             st.session_state.tab2_wrong_ids.discard(st.session_state.tab2_index)
         else:
             st.error(f"❌ 아쉽네요. 정답은: {focus}")
-            # 오답인 경우 다시 출제되도록 저장
             st.session_state.tab2_wrong_ids.add(st.session_state.tab2_index)
 
         if st.button("➡️ 다음 문제", key="next_tab2"):
-            if st.session_state.tab2_wrong_ids:
-                st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
-            else:
-                st.session_state.tab2_index = random.randint(0, len(df) - 1)
-            new_row = df.iloc[st.session_state.tab2_index]
-            st.session_state.tab2_options = generate_options(new_row['Level_02_Focus'].strip())
-            st.session_state.tab2_feedback = False
-            st.rerun()
+            unanswered_tab2_ids = [i for i in range(len(df)) if i not in st.session_state.tab2_correct_ids]
+            if unanswered_tab2_ids:
+                if st.session_state.tab2_wrong_ids:
+                    st.session_state.tab2_index = random.choice(list(st.session_state.tab2_wrong_ids))
+                else:
+                    st.session_state.tab2_index = random.choice(unanswered_tab2_ids)
+                new_row = df.iloc[st.session_state.tab2_index]
+                st.session_state.tab2_options = generate_options(new_row['Level_02_Focus'].strip())
+                st.session_state.tab2_feedback = False
+                st.rerun()
