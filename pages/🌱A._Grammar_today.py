@@ -60,9 +60,9 @@ with col2:
 
 with col3:
     st.caption(data["K"])
-    st.image(data["imgC"], caption="Combined", width=150)
+    st.image(data["imgC"], caption="A+B", width=150)
 
 # st.markdown("**🔸 결합된 문장:**")
 st.success(f"🔸 결합된 문장: {data['C']}")
 st.caption(data["K"])
-st.image(data["imgC"], caption="A + B", width=250)
+st.image(data["imgC"], caption="Combined", width=250)
