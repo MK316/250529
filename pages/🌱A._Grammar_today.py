@@ -59,7 +59,10 @@ with col2:
     st.image(data["imgB"], caption="B", width=150)
 
 with col3:
-    st.markdown(f"**A + B:**<br>{data['C']}", unsafe_allow_html=True)
     st.caption(data["K"])
     st.image(data["imgC"], caption="Combined", width=150)
 
+# st.markdown("**🔸 결합된 문장:**")
+st.success(f"🔸 결합된 문장: {data['C']}")
+st.caption(data["K"])
+st.image(data["imgC"], caption="A + B", width=250)
