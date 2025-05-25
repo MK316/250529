@@ -27,7 +27,7 @@ relative_pronouns = {
         "K": "→ 그녀는 빨간 지붕이 있는 집에 살아요."
     },
     "that": {
-        "desc": "사람과 사물 모두 설명할 수 있으며 who/which 대신 자주 사용됩니다.",
+        "desc": "사람과 사물 모두 대신할 수 있으며 who/which 대신에 자주 사용됩니다.",
         "A": "I read the book.",
         "B": "You gave me the book.",
         "C": "I read the book **that you gave me**.",
