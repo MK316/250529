@@ -82,7 +82,7 @@ with level1:
         </div>
     """, height=80)
 
-    st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
+    st.caption("🐾 해석석: " + row['Level_01_Meaning'])
 
     # Hint button and audio (only show on click)
     if st.button("💡 Hint 보기 (정답 듣기)"):
@@ -157,7 +157,7 @@ with level2:
 
     st.markdown("**문장:**")
     st.markdown(question, unsafe_allow_html=True)
-    st.caption("🐾 Meaning: " + str(row['Level_02_Meaning']))
+    st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
     user_answer = st.radio("어떤 관계대명사가 들어갈까요?", options)
 
     if st.button("정답 확인", key="check2"):
