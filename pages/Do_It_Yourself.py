@@ -38,20 +38,28 @@ with tab1:
     # 현재 문제 불러오기
     row = df.iloc[st.session_state.current_index]
 
-    sentence = row["Level_01"]
-    correct_answer = row["Answer1"]  # "Correct" 또는 "Incorrect"
+    sentence = str(row["Level_01"])
+    correct_answer = row["Answer1"]
     correction = row["Level_01_Correct"]
     meaning = row["Level_01_Meaning"]
+    focus = str(row.get("Level_01_Focus", "")).strip()
 
-    # 문제 문장
+    # 🔴 Focus 단어 강조 (최초 1회만 치환)
+    if focus and focus in sentence:
+        sentence_highlighted = sentence.replace(
+            focus, f"<span style='color:red; font-weight:bold'>{focus}</span>", 1
+        )
+    else:
+        sentence_highlighted = sentence
+
+    # 문제 문장 출력
     st.caption("주어진 문장을 보고 맞는 문장인지 판단해 보세요 :-) 총 10개의 문장을 연습합니다.")
     st.markdown("---")
-    st.markdown(f"#### {sentence}")
-    st.caption(meaning if pd.notna(meaning) else "해석이 제공되지 않았습니다.")
+    st.markdown(f"#### 📌 문장:")
+    st.markdown(f"<p style='font-size:20px'>{sentence_highlighted}</p>", unsafe_allow_html=True)
+
+    st.caption(f"📘 해석: {meaning if pd.notna(meaning) else '해석이 제공되지 않았습니다.'}")
     st.markdown("---")
-
-
-
 
     # 사용자 선택
     user_choice = st.radio(
