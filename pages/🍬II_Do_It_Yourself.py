@@ -46,12 +46,15 @@ level1, level2, level3 = st.tabs(["🌀 Level 1", "🌀 Level 2", "🌀 Level 3"
 # -------------------------------
 # ✅ Level 1: 문장 정답 판단
 # -------------------------------
+
+
 with level1:
     st.subheader("🐥 문장이 맞는지 판단하기 (Level 1)")
 
     if "tab1_index" not in st.session_state:
         st.session_state.tab1_index = 0
         st.session_state.tab1_score = 0
+        st.session_state.show_hint1 = False
 
     def highlight_focus(sentence, focus):
         if not sentence or not focus:
@@ -81,8 +84,11 @@ with level1:
 
     st.caption("🐾 Meaning: " + row['Level_01_Meaning'])
 
-    # 🔈 Hint: play audio of correct sentence
-    with st.expander("💡 Hint (Click to listen to the correct sentence)"):
+    # Hint button and audio (only show on click)
+    if st.button("💡 Hint 보기 (정답 듣기)"):
+        st.session_state.show_hint1 = True
+
+    if st.session_state.get("show_hint1", False):
         tts = gTTS(text=correct_sentence, lang='en')
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
             tts.save(fp.name)
@@ -103,14 +109,13 @@ with level1:
             st.success("✅ 정답입니다!")
         else:
             st.error("❌ 틀렸습니다.")
-        
         st.markdown("**📘 올바른 문장:**")
         st.info(correct_sentence)
 
     if st.button("다음 문장", key="next1"):
         st.session_state.tab1_index = (st.session_state.tab1_index + 1) % len(df)
+        st.session_state.show_hint1 = False  # Reset hint flag
         st.rerun()
-
 
 
 # -------------------------------
