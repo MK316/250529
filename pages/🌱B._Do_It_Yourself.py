@@ -251,31 +251,38 @@ with level3:
     def normalize(text):
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
-    # Initialize state flags if needed
+    # ✅ Initialize state flags
     if "show_balloons" not in st.session_state:
         st.session_state.show_balloons = False
-    if "just_checked_tab3" not in st.session_state:
-        st.session_state.just_checked_tab3 = False
+    if "tab3_completed" not in st.session_state:
+        st.session_state.tab3_completed = False
     
-    # ✅ Show answer button
+    # ✅ Show answer check button
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
-            st.session_state.show_balloons = True  # 🎈 Set flag
+    
+            # ✅ If this is the last item, show balloons
+            if st.session_state.tab3_index + 1 == len(df):
+                st.session_state.show_balloons = True
+                st.session_state.tab3_completed = True
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-            st.session_state.show_balloons = False  # make sure not to show
     
-    # ✅ Balloon trigger after feedback is shown
-    if st.session_state.get("show_balloons", False):
+    # ✅ Show balloons only when quiz is completed
+    if st.session_state.get("tab3_completed", False) and st.session_state.get("show_balloons", False):
         st.balloons()
-        st.session_state.show_balloons = False  # reset after showing
+        st.session_state.show_balloons = False
+        st.session_state.tab3_completed = False  # reset to prevent repeat
     
-    # ✅ Move to next
+    # ✅ Move to next question
     if st.button("다음 문장", key="next3"):
-        st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
+        if st.session_state.tab3_index + 1 < len(df):
+            st.session_state.tab3_index += 1
+        else:
+            st.session_state.tab3_index = 0  # optional: loop back to start
         st.session_state.tab3_selected = []
         st.session_state.tab3_shuffled = []
-        st.session_state.show_balloons = False  # make sure it's cleared
         st.rerun()
+
