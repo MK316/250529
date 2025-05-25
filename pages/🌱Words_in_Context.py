@@ -36,18 +36,20 @@ vocab_dict = {
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
-# Sort words alphabetically
+# Sorted vocabulary dictionary (already prepared)
 sorted_vocab = dict(sorted(vocab_dict.items()))
 
-# Display inline button layout using real HTML
-st.markdown("### 📘 Click a word to learn")
+# ✅ Step 1: Get current page path dynamically
+current_page_path = st.experimental_get_url().split("?")[0]
 
-html = """
-<div style='display: flex; flex-wrap: wrap; gap: 10px;'>
-"""
+# ✅ Step 2: Create inline buttons with correct link
+st.markdown("### 📘 Click a word to learn")
+html = "<div style='display: flex; flex-wrap: wrap; gap: 10px;'>"
+
 for word in sorted_vocab:
+    encoded_word = urllib.parse.quote(word)
     html += f"""
-    <a href="/?word={word}" target="_self">
+    <a href="{current_page_path}?word={encoded_word}" target="_self">
         <button style="
             padding: 10px 16px;
             font-size: 16px;
@@ -57,36 +59,34 @@ for word in sorted_vocab:
             cursor: pointer;">{word}</button>
     </a>
     """
-html += "</div>"
 
+html += "</div>"
 components.html(html, height=300)
 
-# Handle selection
-query_params = st.query_params
+# ✅ Step 3: Handle query param
+query_params = st.experimental_get_query_params()
 selected_word = query_params.get("word", [None])[0]
 
+# ✅ Step 4: Show TTS and meaning if word selected
 if selected_word and selected_word in sorted_vocab:
     meaning, sentence = sorted_vocab[selected_word]
 
-    # Word audio
+    # Word TTS
     tts_word = gTTS(text=selected_word, lang='en')
     audio_word = BytesIO()
     tts_word.write_to_fp(audio_word)
     audio_word.seek(0)
 
-    # Sentence audio
+    # Sentence TTS
     tts_sentence = gTTS(text=sentence, lang='en')
     audio_sentence = BytesIO()
     tts_sentence.write_to_fp(audio_sentence)
     audio_sentence.seek(0)
 
-    # Display details
     st.markdown(f"## ✅ {selected_word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
-
     st.markdown("🔈 **Word Pronunciation**")
     st.audio(audio_word, format="audio/mp3")
-
     st.markdown("🗣️ **Sentence Audio**")
     st.audio(audio_sentence, format="audio/mp3")
