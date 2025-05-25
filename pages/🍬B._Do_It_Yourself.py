@@ -109,29 +109,15 @@ with level2:
     st.subheader("🐸 관계대명사 빈칸 채워기 (Level 2)")
 
     def make_cloze(sentence, focus):
-        if not sentence or not focus:
-            return sentence
-    
-        focus = focus.strip()
-    
-        # Case 1: comma-separated focus like "that, which"
         if "," in focus:
             parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
-                first, second = parts
-                # Replace both in order, second first to avoid overlap
-                sentence = re.sub(rf"\b{re.escape(second)}\b", "<u>_____</u>", sentence, count=1)
-                sentence = re.sub(rf"\b{re.escape(first)}\b", "<u>_____</u>", sentence, count=1)
-                return sentence
-    
-        # Case 2: punctuation + word, like ", is"
-        if re.match(r"^,\s*\w+$", focus):
-            word = focus.replace(",", "").strip()
-            return re.sub(r",\s*" + re.escape(word), ", <u>_____</u> " + word, sentence, count=1)
-    
-        # Case 3: single word focus
-        return re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, count=1)
-
+                part1, part2 = parts
+                sentence = re.sub(rf"\b{re.escape(part1)}\b", "<u>_____</u>", sentence, 1)
+                sentence = re.sub(rf"(?<=, )\b{re.escape(part2)}\b", "<u>_____</u>", sentence, 1)
+        else:
+            sentence = re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, 1)
+        return sentence
 
 
     def generate_options(correct):
