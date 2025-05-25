@@ -1,9 +1,7 @@
 # 📦 Required Libraries
 import streamlit as st
 from gtts import gTTS
-import os
 from io import BytesIO
-import base64
 
 # 🔡 Vocabulary Dictionary: word → (Korean meaning, example sentence)
 vocab_dict = {
@@ -52,9 +50,9 @@ st.set_page_config(page_title="Word Practice", layout="wide")
 st.title("🎧 Vocabulary Practice with Audio and Meaning")
 
 # 🔘 Display each word as a button in rows
-cols = st.columns(6)
+cols = st.columns(5)
 for i, word in enumerate(sorted_vocab.keys()):
-    if cols[i % 6].button(word):
+    if cols[i % 5].button(word):
         st.session_state.selected_word = word
 
 # 🔊 When clicked
@@ -62,14 +60,25 @@ if "selected_word" in st.session_state:
     word = st.session_state.selected_word
     meaning, sentence = sorted_vocab[word]
 
-    # Generate TTS
-    tts = gTTS(text=word, lang='en')
-    mp3_fp = BytesIO()
-    tts.write_to_fp(mp3_fp)
-    mp3_fp.seek(0)
+    # Word Audio
+    tts_word = gTTS(text=word, lang='en')
+    audio_word = BytesIO()
+    tts_word.write_to_fp(audio_word)
+    audio_word.seek(0)
 
-    # Display word + meaning + sentence + audio
+    # Sentence Audio
+    tts_sentence = gTTS(text=sentence, lang='en')
+    audio_sentence = BytesIO()
+    tts_sentence.write_to_fp(audio_sentence)
+    audio_sentence.seek(0)
+
+    # 🎯 Display
     st.markdown(f"## ✅ {word}")
     st.markdown(f"**Korean**: {meaning}")
     st.markdown(f"**Example**: _{sentence}_")
-    st.audio(mp3_fp, format="audio/mp3")
+
+    st.markdown("🔈 **Word Pronunciation**")
+    st.audio(audio_word, format="audio/mp3")
+
+    st.markdown("🗣️ **Sentence Audio**")
+    st.audio(audio_sentence, format="audio/mp3")
