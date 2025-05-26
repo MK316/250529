@@ -69,7 +69,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 st.title("📚 Homework Quiz: Level 1 to 3")
 
 # 🔁 Reset button
-if st.button("🔄 Quiz 다시 시작하기"):
+if st.button("🔄 Quiz 처음부터 다시 시작하기"):
     st.session_state.clear()
     st.rerun()
 
