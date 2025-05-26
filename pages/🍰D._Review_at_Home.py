@@ -205,13 +205,16 @@ def play_audio_summary(name, scores):
         tts.save(fp.name)
         audio_data = open(fp.name, "rb").read()
         b64 = base64.b64encode(audio_data).decode()
-        audio_html = f"""
-        <audio controls autoplay>
+        return f"""
+        <audio controls>
             <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
         """
-        st.markdown(audio_html, unsafe_allow_html=True)
+audio_html = play_audio_summary(st.session_state.username, st.session_state.scores)
+st.markdown("🎧 Click below to hear your score summary:")
+st.markdown(audio_html, unsafe_allow_html=True)
+
 
 # ---------------------
 # 🎉 Certificate Download
