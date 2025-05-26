@@ -49,7 +49,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 
     c.setFont("Helvetica", 16)
     c.drawCentredString(width / 2, height - 140, f"This certifies that")
-    c.setFont("NanumGothic", 18)
+    c.setFont("Helvetica-Bold", 18)
     c.drawCentredString(width / 2, height - 170, user_name)
     c.setFont("Helvetica", 16)
     c.drawCentredString(width / 2, height - 200, "has successfully completed all quiz levels.")
@@ -70,6 +70,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
     c.save()
     buffer.seek(0)
     return buffer
+
 # ---------------------
 # 🚀 Start App
 # ---------------------
