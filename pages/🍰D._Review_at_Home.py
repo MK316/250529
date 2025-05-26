@@ -39,88 +39,81 @@ vocab_dict = {
     "viral": ("입소문 난", "The image, which went viral, was fake."),
 }
 
-# --- Select 10 words ---
-selected_words = random.sample(list(vocab_dict.keys()), 10)
-selected_words = [word.split()[0].lower() for word in selected_words]
 
-# --- Make Grid ---
-grid_size = 15
-grid = [['' for _ in range(grid_size)] for _ in range(grid_size)]
+# Selected 7 words from your vocab_dict
+puzzle_words = {
+    1: {"word": "impressive", "clue": "인상적인", "direction": "across", "row": 0, "col": 0},
+    2: {"word": "artists", "clue": "예술가들", "direction": "down", "row": 0, "col": 1},
+    3: {"word": "tech", "clue": "기술", "direction": "across", "row": 2, "col": 0},
+    4: {"word": "major", "clue": "주요한", "direction": "down", "row": 0, "col": 3},
+    5: {"word": "viral", "clue": "입소문 난", "direction": "across", "row": 4, "col": 0},
+    6: {"word": "production", "clue": "생산", "direction": "down", "row": 0, "col": 5},
+    7: {"word": "mimics", "clue": "흉내내다", "direction": "across", "row": 6, "col": 0},
+}
 
-def place_word(grid, word, start_row, start_col, direction):
-    if direction == 'across':
-        if start_col + len(word) > grid_size:
-            return False
-        for i in range(len(word)):
-            if grid[start_row][start_col + i] not in ('', word[i]):
-                return False
-        for i in range(len(word)):
-            grid[start_row][start_col + i] = word[i]
-        return True
-    else:
-        if start_row + len(word) > grid_size:
-            return False
-        for i in range(len(word)):
-            if grid[start_row + i][start_col] not in ('', word[i]):
-                return False
-        for i in range(len(word)):
-            grid[start_row + i][start_col] = word[i]
-        return True
+grid_size = 10
+grid = [["" for _ in range(grid_size)] for _ in range(grid_size)]
+cell_ids = [["" for _ in range(grid_size)] for _ in range(grid_size)]
+clue_numbers = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 
-directions = ['across', 'down']
-placed_words = []
-for word in selected_words:
-    placed = False
-    for _ in range(100):
-        direction = random.choice(directions)
-        row = random.randint(0, grid_size - 1)
-        col = random.randint(0, grid_size - 1)
-        if place_word(grid, word, row, col, direction):
-            placed_words.append((word, direction, row, col))
-            placed = True
-            break
+# Place words and assign IDs
+for number, data in puzzle_words.items():
+    word = data["word"].upper()
+    row, col = data["row"], data["col"]
+    direction = data["direction"]
+    for i, _ in enumerate(word):
+        r, c = (row, col + i) if direction == "across" else (row + i, col)
+        grid[r][c] = word[i]
+        cell_ids[r][c] = f"{number}_{i}"
+    clue_numbers[row][col] = str(number)
 
+# Set up page
+st.set_page_config(page_title="Crossword Puzzle", layout="centered")
+st.title("🧩 Interactive Crossword Puzzle")
+st.write("Type the English words based on the clues (in Korean).")
+
+# Session state init
+if "answers" not in st.session_state:
+    st.session_state.answers = {}
+
+# Draw the puzzle grid
 for i in range(grid_size):
+    cols = st.columns(grid_size)
     for j in range(grid_size):
-        if grid[i][j] == '':
-            grid[i][j] = chr(random.randint(65, 90))
+        cell_id = cell_ids[i][j]
+        if cell_id:
+            default = st.session_state.answers.get(cell_id, "")
+            with cols[j]:
+                st.text_input(
+                    label=clue_numbers[i][j] if clue_numbers[i][j] else " ",
+                    key=cell_id,
+                    max_chars=1,
+                    label_visibility="visible" if clue_numbers[i][j] else "hidden",
+                )
+                st.session_state.answers[cell_id] = st.session_state.get(cell_id, "")
+        else:
+            cols[j].markdown(" ")
 
-# --- Plot Puzzle ---
-fig, ax = plt.subplots(figsize=(10, 10))
-ax.set_xticks(np.arange(grid_size + 1) - 0.5, minor=True)
-ax.set_yticks(np.arange(grid_size + 1) - 0.5, minor=True)
-ax.grid(which='minor', color='black', linestyle='-', linewidth=1)
-ax.tick_params(which='major', bottom=False, left=False, labelbottom=False, labelleft=False)
+# Show clues
+st.markdown("### 📌 Clues")
+for number, data in puzzle_words.items():
+    st.write(f"**{number}. ({data['direction']})** {data['clue']}")
 
-grid_array = np.array(grid)
-for i in range(grid_size):
-    for j in range(grid_size):
-        ax.text(j, i, grid_array[i, j], ha='center', va='center', fontsize=12, fontweight='bold')
-
-ax.set_xlim(-0.5, grid_size - 0.5)
-ax.set_ylim(grid_size - 0.5, -0.5)
-plt.title("🔤 Word Puzzle: Find the Vocabulary!", fontsize=16)
-plt.tight_layout()
-
-# --- Streamlit App Layout ---
-st.set_page_config(page_title="Word Puzzle", layout="wide")
-st.title("🧩 Word Puzzle Quiz")
-st.subheader("Find the hidden vocabulary words in the grid below!")
-
-# Convert Matplotlib figure to PNG
-buf = io.BytesIO()
-fig.savefig(buf, format="png")
-buf.seek(0)
-image = Image.open(buf)
-st.image(image, caption="Can you find all 10 words?", use_container_width=True)
-
-# Show word list
-st.markdown("### 🔍 Words to Find")
-for word_info in placed_words:
-    st.markdown(f"- **{word_info[0].upper()}**")
-
-# Toggle answer key
-if st.checkbox("Show Answer Key (for Teachers)"):
-    st.markdown("### 🧩 Answer Key")
-    for word, direction, row, col in placed_words:
-        st.write(f"**{word.upper()}** → {direction.upper()} at row {row + 1}, column {col + 1}")
+# Check answers
+if st.button("Check Answers"):
+    correct = 0
+    total = 0
+    for number, data in puzzle_words.items():
+        word = data["word"].upper()
+        row, col = data["row"], data["col"]
+        direction = data["direction"]
+        user_word = ""
+        for i in range(len(word)):
+            r, c = (row, col + i) if direction == "across" else (row + i, col)
+            cell_id = cell_ids[r][c]
+            user_input = st.session_state.answers.get(cell_id, "").upper()
+            user_word += user_input
+        total += 1
+        if user_word == word:
+            correct += 1
+    st.success(f"✅ {correct} out of {total} correct.")
