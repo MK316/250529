@@ -3,4 +3,4 @@ pandas
 gtts
 matplotlib
 numpy
-PIL
+Pillow
