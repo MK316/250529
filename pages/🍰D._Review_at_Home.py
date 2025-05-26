@@ -218,7 +218,9 @@ def play_audio_summary(name, scores):
 # 🎉 Certificate Download
 # ---------------------
 
-award_url = "https://github.com/MK316/250529/raw/main/images/medal.png"
+
+award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
+
 try:
     award_img = ImageReader(requests.get(award_url, stream=True).raw)
     c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
