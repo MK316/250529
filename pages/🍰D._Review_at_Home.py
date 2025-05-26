@@ -67,6 +67,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 # 🚀 Start App
 # ---------------------
 st.markdown("### 📚 Homework Quiz: 총 15 문법 문제")
+st.caption("Level 1, 2, 3를 모두 풀면 마지막에 확인서를 다운받을 수 있습니다.")
 
 # 🔁 Reset button
 if st.button("🔄 Reset Quiz"):
@@ -92,7 +93,7 @@ if not st.session_state.name_entered:
 
 st.markdown(f"**👤 Student:** {st.session_state.username}")
 st.markdown(f"**🕒 Start Time:** {st.session_state.start_time}")
-st.caption("Level 1, 2, 3를 모두 풀면 마지막에 확인서를 다운받을 수 있습니다.")
+
 
 # ✅ Track completed levels and scores
 if "completed_levels" not in st.session_state:
