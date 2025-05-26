@@ -1,3 +1,6 @@
 streamlit
 pandas
 gtts
+matplotlib
+numpy
+PIL
