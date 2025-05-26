@@ -38,7 +38,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
     width, height = A4
 
     try:
-        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
+        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal2.png"
         response = requests.get(award_url)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
             tmp.write(response.content)
