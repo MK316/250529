@@ -60,12 +60,17 @@ st.title("📚 Homework Quiz: Level 1 to 3")
 # ✅ User input
 if "username" not in st.session_state:
     st.session_state.username = ""
+    st.session_state.name_entered = False
 
-if st.session_state.username == "":
-    st.session_state.username = st.text_input("Enter your name to begin:")
+if not st.session_state.name_entered:
+    user_name_input = st.text_input("Enter your name to begin:", key="name_input")
+    if st.button("Start Quiz") and user_name_input.strip():
+        st.session_state.username = user_name_input.strip()
+        st.session_state.name_entered = True
+        st.rerun()
     st.stop()
-else:
-    st.markdown(f"**👤 Student:** {st.session_state.username}")
+
+st.markdown(f"**👤 Student:** {st.session_state.username}")
 
 # ✅ Track completed levels
 if "completed_levels" not in st.session_state:
