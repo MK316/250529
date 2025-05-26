@@ -135,7 +135,8 @@ elif level == "Level 3":
     for i, row in df_sample.iterrows():
         sentence = row['Level_03']
         meaning = row['Level_03_Meaning']
-        words = re.findall(r"\w+(?:'\w+)?[.,!?;]?"," sentence)
+        words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", sentence)
+
         shuffled = random.sample(words, len(words))
 
         st.markdown(f"**Q{i+1}.** Arrange the sentence:")
