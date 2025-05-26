@@ -112,7 +112,7 @@ buf = io.BytesIO()
 fig.savefig(buf, format="png")
 buf.seek(0)
 image = Image.open(buf)
-st.image(image, caption="Can you find all 10 words?", use_column_width=True)
+st.image(image, caption="Can you find all 10 words?", use_container_width=True)
 
 # Show word list
 st.markdown("### 🔍 Words to Find")
