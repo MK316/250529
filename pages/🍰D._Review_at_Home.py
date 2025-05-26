@@ -82,7 +82,7 @@ if "start_time" not in st.session_state:
     st.session_state["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 if not st.session_state.name_entered:
-    user_name_input = st.text_input("Enter your name to begin:", key="name_input")
+    user_name_input = st.text_input("영어로 본인 이름을 쓰고 시작하세요:", key="name_input")
     if st.button("Start Quiz") and user_name_input.strip():
         st.session_state.username = user_name_input.strip()
         st.session_state.name_entered = True
