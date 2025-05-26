@@ -37,12 +37,19 @@ def generate_certificate(user_name, scores, start_time, end_time):
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
+    try:
+        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"  # Replace with actual URL
+        award_img = ImageReader(requests.get(award_url, stream=True).raw)
+        c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
+    except Exception as e:
+        print("Failed to load award image:", e)
+
     c.setFont("Helvetica-Bold", 24)
     c.drawCentredString(width / 2, height - 100, "Certificate of Completion")
 
     c.setFont("Helvetica", 16)
     c.drawCentredString(width / 2, height - 140, f"This certifies that")
-    c.setFont("Helvetica-Bold", 18)
+    c.setFont("NanumGothic", 18)
     c.drawCentredString(width / 2, height - 170, user_name)
     c.setFont("Helvetica", 16)
     c.drawCentredString(width / 2, height - 200, "has successfully completed all quiz levels.")
@@ -63,7 +70,6 @@ def generate_certificate(user_name, scores, start_time, end_time):
     c.save()
     buffer.seek(0)
     return buffer
-
 # ---------------------
 # 🚀 Start App
 # ---------------------
@@ -218,13 +224,6 @@ def play_audio_summary(name, scores):
 # 🎉 Certificate Download
 # ---------------------
 
-
-try:
-    award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
-    award_img = ImageReader(requests.get(award_url, stream=True).raw)
-    c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
-except Exception as e:
-    print("Failed to load award image:", e)
 
 
 if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels):
