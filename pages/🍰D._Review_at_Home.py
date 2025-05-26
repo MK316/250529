@@ -38,11 +38,13 @@ def generate_certificate(user_name, scores, start_time, end_time):
     width, height = A4
 
     try:
-        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"  # Replace with actual URL
-        award_img = ImageReader(requests.get(award_url, stream=True).raw)
+        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
+        response = requests.get(award_url)
+        award_img = ImageReader(BytesIO(response.content))
         c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
     except Exception as e:
         print("Failed to load award image:", e)
+
 
     c.setFont("Helvetica-Bold", 24)
     c.drawCentredString(width / 2, height - 100, "Certificate of Completion")
