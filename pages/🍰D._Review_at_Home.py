@@ -38,7 +38,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
     width, height = A4
 
     try:
-        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
+        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"  # Replace with actual URL
         response = requests.get(award_url)
         award_img = ImageReader(BytesIO(response.content))
         c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
