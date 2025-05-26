@@ -38,12 +38,15 @@ def generate_certificate(user_name, scores, start_time, end_time):
     width, height = A4
 
     try:
-        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"  # Replace with actual URL
+        award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
         response = requests.get(award_url)
-        award_img = ImageReader(BytesIO(response.content))
-        c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
+            tmp.write(response.content)
+            tmp_path = tmp.name
+        c.drawImage(tmp_path, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
     except Exception as e:
         print("Failed to load award image:", e)
+
 
 
     c.setFont("Helvetica-Bold", 24)
