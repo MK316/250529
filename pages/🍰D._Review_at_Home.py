@@ -219,13 +219,13 @@ def play_audio_summary(name, scores):
 # ---------------------
 
 
-award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
-
 try:
+    award_url = "https://raw.githubusercontent.com/MK316/250529/main/images/medal.png"
     award_img = ImageReader(requests.get(award_url, stream=True).raw)
     c.drawImage(award_img, width - 120, height - 150, width=70, height=70, preserveAspectRatio=True)
 except Exception as e:
     print("Failed to load award image:", e)
+
 
 if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels):
     st.success("🎉 All levels completed!")
