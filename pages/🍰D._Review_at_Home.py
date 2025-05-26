@@ -40,17 +40,16 @@ vocab_dict = {
 }
 
 
-import streamlit as st
 
-# Word layout
+# Define the crossword words and layout
 puzzle_words = {
-    1: {"word": "genius", "clue": "천재적인", "direction": "across", "row": 0, "col": 0},
-    2: {"word": "incident", "clue": "사건", "direction": "down", "row": 0, "col": 2},
-    3: {"word": "path", "clue": "길", "direction": "across", "row": 3, "col": 0},
-    4: {"word": "major", "clue": "주요한", "direction": "down", "row": 0, "col": 5},
-    5: {"word": "portrait", "clue": "초상화", "direction": "across", "row": 6, "col": 0},
-    6: {"word": "viral", "clue": "입소문 난", "direction": "down", "row": 0, "col": 7},
-    7: {"word": "fake", "clue": "가짜의", "direction": "across", "row": 9, "col": 3},
+    1: {"word": "major", "clue": "주요한", "direction": "down", "row": 0, "col": 0},
+    2: {"word": "genius", "clue": "천재", "direction": "across", "row": 0, "col": 2},
+    3: {"word": "incident", "clue": "사건", "direction": "across", "row": 0, "col": 5},
+    4: {"word": "viral", "clue": "바이럴", "direction": "down", "row": 1, "col": 4},
+    5: {"word": "portrait", "clue": "초상화", "direction": "across", "row": 4, "col": 0},
+    6: {"word": "fake", "clue": "가짜의", "direction": "across", "row": 6, "col": 2},
+    7: {"word": "path", "clue": "길", "direction": "across", "row": 8, "col": 1},
 }
 
 grid_size = 12
@@ -58,7 +57,7 @@ grid = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 cell_ids = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 clue_numbers = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 
-# Fill letters and clues
+# Fill grid and record positions
 for number, data in puzzle_words.items():
     word = data["word"].upper()
     row, col = data["row"], data["col"]
@@ -71,19 +70,18 @@ for number, data in puzzle_words.items():
 
 # Streamlit layout
 st.set_page_config(page_title="Crossword Puzzle", layout="centered")
-st.title("🧩 AI Vocabulary Crossword")
-st.write("Fill in the boxes with the English words based on the Korean clues.")
+st.title("🧩 Crossword Puzzle")
+st.caption("Enter English words based on the Korean clues.")
 
 if "answers" not in st.session_state:
     st.session_state.answers = {}
 
-# Render grid
+# Draw the puzzle grid
 for i in range(grid_size):
     cols = st.columns(grid_size)
     for j in range(grid_size):
         cell_id = cell_ids[i][j]
         if cell_id:
-            default = st.session_state.answers.get(cell_id, "")
             with cols[j]:
                 st.text_input(
                     label=clue_numbers[i][j] if clue_numbers[i][j] else " ",
@@ -95,12 +93,19 @@ for i in range(grid_size):
         else:
             cols[j].markdown(" ")
 
-# Clues
+# Display clues
 st.markdown("### 📌 Clues")
+st.markdown("#### Across:")
 for number, data in puzzle_words.items():
-    st.write(f"**{number}. ({data['direction']})** {data['clue']}")
+    if data["direction"] == "across":
+        st.write(f"**{number}.** {data['clue']}")
 
-# Answer check
+st.markdown("#### Down:")
+for number, data in puzzle_words.items():
+    if data["direction"] == "down":
+        st.write(f"**{number}.** {data['clue']}")
+
+# Answer checking logic
 if st.button("Check Answers"):
     correct = 0
     total = 0
