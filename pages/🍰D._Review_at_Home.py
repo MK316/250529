@@ -69,7 +69,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 st.title("📚 Homework Quiz: Level 1 to 3")
 
 # 🔁 Reset button
-if st.button("🔄 Quiz 처음부터 다시 시작하기")
+if st.button("🔄 Reset Quiz"):
     st.session_state.clear()
     st.rerun()
 
@@ -82,15 +82,17 @@ if "start_time" not in st.session_state:
     st.session_state["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 if not st.session_state.name_entered:
-    user_name_input = st.text_input("시작하기 위해 아래 박스에 영문으로 이름을 쓰세요.", key="name_input")
+    user_name_input = st.text_input("Enter your name to begin:", key="name_input")
     if st.button("Start Quiz") and user_name_input.strip():
         st.session_state.username = user_name_input.strip()
         st.session_state.name_entered = True
         st.session_state.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         st.rerun()
     st.stop()
+
 st.markdown(f"**👤 Student:** {st.session_state.username}")
 st.markdown(f"**🕒 Start Time:** {st.session_state.start_time}")
+
 # ✅ Track completed levels and scores
 if "completed_levels" not in st.session_state:
     st.session_state.completed_levels = set()
