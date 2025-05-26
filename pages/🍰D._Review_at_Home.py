@@ -194,6 +194,26 @@ elif level == "Level 3":
         st.session_state.scores["Level 3"] = score
 
 # ---------------------
+# 🔊 Generate Completion Audio
+# ---------------------
+def play_audio_summary(name, scores):
+    message = f"{name}, congratulations! You have completed all levels. "
+    for level, score in scores.items():
+        message += f"{level} score is {score} out of 5. "
+    tts = gTTS(message, lang='en')
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+        tts.save(fp.name)
+        audio_data = open(fp.name, "rb").read()
+        b64 = base64.b64encode(audio_data).decode()
+        audio_html = f"""
+        <audio controls autoplay>
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        """
+        st.markdown(audio_html, unsafe_allow_html=True)
+
+# ---------------------
 # 🎉 Certificate Download
 # ---------------------
 if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels):
