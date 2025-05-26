@@ -91,6 +91,8 @@ level = st.selectbox("Select a quiz level:", ["Level 1", "Level 2", "Level 3"])
 # ✅ Sample 5 questions from each level (only once per level)
 if "sampled_questions" not in st.session_state:
     st.session_state.sampled_questions = {}
+if "shuffled_words" not in st.session_state:
+    st.session_state.shuffled_words = {}
 
 if level not in st.session_state.sampled_questions:
     st.session_state.sampled_questions[level] = df.sample(5, random_state=random.randint(0, 999))
@@ -152,7 +154,11 @@ elif level == "Level 3":
         sentence = row['Level_03']
         meaning = row['Level_03_Meaning']
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", sentence)
-        shuffled = random.sample(words, len(words))
+
+        shuffle_key = f"lvl3_shuffled_{i}"
+        if shuffle_key not in st.session_state.shuffled_words:
+            st.session_state.shuffled_words[shuffle_key] = random.sample(words, len(words))
+        shuffled = st.session_state.shuffled_words[shuffle_key]
 
         st.markdown(f"**Q{i+1}.** Arrange the sentence:")
         st.caption(f"해석: {meaning}")
