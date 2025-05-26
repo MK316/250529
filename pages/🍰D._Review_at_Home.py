@@ -10,6 +10,7 @@ import base64
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from datetime import datetime
 
 # ---------------------
 # 🧠 Load Data
@@ -30,7 +31,7 @@ df = load_data()
 # ---------------------
 # 🧾 Certificate Generator
 # ---------------------
-def generate_certificate(user_name, scores):
+def generate_certificate(user_name, scores, start_time, end_time):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -51,8 +52,12 @@ def generate_certificate(user_name, scores):
         c.drawCentredString(width / 2, y, f"{level}: {score} / 5 correct")
         y -= 20
 
+    c.setFont("Helvetica", 12)
+    c.drawCentredString(width / 2, y - 10, f"Start Time: {start_time}")
+    c.drawCentredString(width / 2, y - 30, f"End Time: {end_time}")
+
     c.setFont("Helvetica-Oblique", 12)
-    c.drawCentredString(width / 2, y - 10, "Issued by AI English Quiz App")
+    c.drawCentredString(width / 2, y - 60, "Issued by AI English Quiz App")
 
     c.save()
     buffer.seek(0)
@@ -65,8 +70,7 @@ st.title("📚 Homework Quiz: Level 1 to 3")
 
 # 🔁 Reset button
 if st.button("🔄 Reset Quiz"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    st.session_state.clear()
     st.rerun()
 
 # ✅ User input
@@ -74,16 +78,20 @@ if "username" not in st.session_state:
     st.session_state["username"] = ""
 if "name_entered" not in st.session_state:
     st.session_state["name_entered"] = False
+if "start_time" not in st.session_state:
+    st.session_state["start_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 if not st.session_state.name_entered:
     user_name_input = st.text_input("Enter your name to begin:", key="name_input")
     if st.button("Start Quiz") and user_name_input.strip():
         st.session_state.username = user_name_input.strip()
         st.session_state.name_entered = True
+        st.session_state.start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         st.rerun()
     st.stop()
 
 st.markdown(f"**👤 Student:** {st.session_state.username}")
+st.markdown(f"**🕒 Start Time:** {st.session_state.start_time}")
 
 # ✅ Track completed levels and scores
 if "completed_levels" not in st.session_state:
@@ -188,5 +196,6 @@ elif level == "Level 3":
 # ---------------------
 if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels):
     st.success("🎉 All levels completed!")
-    cert_file = generate_certificate(st.session_state.username, st.session_state.scores)
+    end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    cert_file = generate_certificate(st.session_state.username, st.session_state.scores, st.session_state.start_time, end_time)
     st.download_button("📄 Download Certificate", cert_file, file_name="certificate.pdf")
