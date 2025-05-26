@@ -63,6 +63,12 @@ def generate_certificate(user_name, scores):
 # ---------------------
 st.title("📚 Homework Quiz: Level 1 to 3")
 
+# 🔁 Reset button
+if st.button("🔄 Reset Quiz"):
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    st.experimental_rerun()
+
 # ✅ User input
 if "username" not in st.session_state:
     st.session_state["username"] = ""
