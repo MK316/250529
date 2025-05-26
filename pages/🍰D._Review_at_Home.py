@@ -11,6 +11,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
+st.write("This app doesn't work yet. Currently working.")
 # ---------------------
 # 🧠 Load Data
 # ---------------------
