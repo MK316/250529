@@ -66,7 +66,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 # ---------------------
 # 🚀 Start App
 # ---------------------
-st.title("📚 Homework Quiz: Level 1 to 3")
+st.markdown("### 📚 Homework Quiz: 총 15 문법 문제")
 
 # 🔁 Reset button
 if st.button("🔄 Reset Quiz"):
