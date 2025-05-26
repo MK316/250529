@@ -92,7 +92,6 @@ if not st.session_state.name_entered:
 
 st.markdown(f"**👤 Student:** {st.session_state.username}")
 st.markdown(f"**🕒 Start Time:** {st.session_state.start_time}")
-st.caption("😊 이 퀴즈에는 오늘 배운 문법을 세 단계로 연습합니다. 각 단계별로 5개 문항이 임의로 나타납니다. 세 단계를 모두 마치는 경우에만 완료 확인서를 다운받을 수 있습니다. 언제든 다시 시작하고 싶을 때에는 다시 시작하기 버튼을 누를 수 있습니다.")
 # ✅ Track completed levels and scores
 if "completed_levels" not in st.session_state:
     st.session_state.completed_levels = set()
