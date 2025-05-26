@@ -41,3 +41,5 @@ for i, j in connections:
 plt.title("🧩 Match the English Words to Their Korean Meanings", fontsize=14)
 plt.tight_layout()
 plt.show()
+plt.savefig("matching_puzzle.png", dpi=300)
+
