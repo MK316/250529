@@ -205,16 +205,13 @@ def play_audio_summary(name, scores):
         tts.save(fp.name)
         audio_data = open(fp.name, "rb").read()
         b64 = base64.b64encode(audio_data).decode()
-        return f"""
+        audio_html = f"""
         <audio controls>
             <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
         """
-audio_html = play_audio_summary(st.session_state.username, st.session_state.scores)
-st.markdown("🎧 Click below to hear your score summary:")
-st.markdown(audio_html, unsafe_allow_html=True)
-
+        st.markdown(audio_html, unsafe_allow_html=True)
 
 # ---------------------
 # 🎉 Certificate Download
@@ -223,4 +220,6 @@ if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels)
     st.success("🎉 All levels completed!")
     end_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cert_file = generate_certificate(st.session_state.username, st.session_state.scores, st.session_state.start_time, end_time)
+    st.markdown("#### ▶ Play Summary Audio")
+    play_audio_summary(st.session_state.username, st.session_state.scores)
     st.download_button("📄 Download Certificate", cert_file, file_name="certificate.pdf")
