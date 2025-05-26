@@ -4,3 +4,4 @@ gtts
 matplotlib
 numpy
 Pillow
+reportlab
