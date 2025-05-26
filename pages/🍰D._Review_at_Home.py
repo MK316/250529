@@ -40,43 +40,44 @@ vocab_dict = {
 }
 
 
-# Selected 7 words from your vocab_dict
+import streamlit as st
+
+# Word layout
 puzzle_words = {
-    1: {"word": "impressive", "clue": "인상적인", "direction": "across", "row": 0, "col": 0},
-    2: {"word": "artists", "clue": "예술가들", "direction": "down", "row": 0, "col": 1},
-    3: {"word": "tech", "clue": "기술", "direction": "across", "row": 2, "col": 0},
-    4: {"word": "major", "clue": "주요한", "direction": "down", "row": 0, "col": 3},
-    5: {"word": "viral", "clue": "입소문 난", "direction": "across", "row": 4, "col": 0},
-    6: {"word": "production", "clue": "생산", "direction": "down", "row": 0, "col": 5},
-    7: {"word": "mimics", "clue": "흉내내다", "direction": "across", "row": 6, "col": 0},
+    1: {"word": "genius", "clue": "천재적인", "direction": "across", "row": 0, "col": 0},
+    2: {"word": "incident", "clue": "사건", "direction": "down", "row": 0, "col": 2},
+    3: {"word": "path", "clue": "길", "direction": "across", "row": 3, "col": 0},
+    4: {"word": "major", "clue": "주요한", "direction": "down", "row": 0, "col": 5},
+    5: {"word": "portrait", "clue": "초상화", "direction": "across", "row": 6, "col": 0},
+    6: {"word": "viral", "clue": "입소문 난", "direction": "down", "row": 0, "col": 7},
+    7: {"word": "fake", "clue": "가짜의", "direction": "across", "row": 9, "col": 3},
 }
 
-grid_size = 10
+grid_size = 12
 grid = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 cell_ids = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 clue_numbers = [["" for _ in range(grid_size)] for _ in range(grid_size)]
 
-# Place words and assign IDs
+# Fill letters and clues
 for number, data in puzzle_words.items():
     word = data["word"].upper()
     row, col = data["row"], data["col"]
     direction = data["direction"]
-    for i, _ in enumerate(word):
+    for i, letter in enumerate(word):
         r, c = (row, col + i) if direction == "across" else (row + i, col)
-        grid[r][c] = word[i]
+        grid[r][c] = letter
         cell_ids[r][c] = f"{number}_{i}"
     clue_numbers[row][col] = str(number)
 
-# Set up page
+# Streamlit layout
 st.set_page_config(page_title="Crossword Puzzle", layout="centered")
-st.title("🧩 Interactive Crossword Puzzle")
-st.write("Type the English words based on the clues (in Korean).")
+st.title("🧩 AI Vocabulary Crossword")
+st.write("Fill in the boxes with the English words based on the Korean clues.")
 
-# Session state init
 if "answers" not in st.session_state:
     st.session_state.answers = {}
 
-# Draw the puzzle grid
+# Render grid
 for i in range(grid_size):
     cols = st.columns(grid_size)
     for j in range(grid_size):
@@ -94,12 +95,12 @@ for i in range(grid_size):
         else:
             cols[j].markdown(" ")
 
-# Show clues
+# Clues
 st.markdown("### 📌 Clues")
 for number, data in puzzle_words.items():
     st.write(f"**{number}. ({data['direction']})** {data['clue']}")
 
-# Check answers
+# Answer check
 if st.button("Check Answers"):
     correct = 0
     total = 0
@@ -116,4 +117,4 @@ if st.button("Check Answers"):
         total += 1
         if user_word == word:
             correct += 1
-    st.success(f"✅ {correct} out of {total} correct.")
+    st.success(f"✅ {correct} out of {total} correct!")
