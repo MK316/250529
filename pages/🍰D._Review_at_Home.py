@@ -59,8 +59,9 @@ st.title("📚 Homework Quiz: Level 1 to 3")
 
 # ✅ User input
 if "username" not in st.session_state:
-    st.session_state.username = ""
-    st.session_state.name_entered = False
+    st.session_state["username"] = ""
+if "name_entered" not in st.session_state:
+    st.session_state["name_entered"] = False
 
 if not st.session_state.name_entered:
     user_name_input = st.text_input("Enter your name to begin:", key="name_input")
@@ -113,7 +114,7 @@ elif level == "Level 2":
         sentence = row['Level_02']
         focus = row['Level_02_Focus']
         meaning = row['Level_02_Meaning']
-        cloze = re.sub(rf"\\b{re.escape(focus)}\\b", "_____", sentence, 1)
+        cloze = re.sub(rf"\b{re.escape(focus)}\b", "_____", sentence, 1)
 
         st.markdown(f"**Q{i+1}.** {cloze}")
         st.caption(f"해석: {meaning}")
@@ -134,7 +135,7 @@ elif level == "Level 3":
     for i, row in df_sample.iterrows():
         sentence = row['Level_03']
         meaning = row['Level_03_Meaning']
-        words = re.findall(r"\\w+(?:'\\w+)?[.,!?;]?", sentence)
+        words = re.findall(r"\w+(?:'\w+)?[.,!?;]?"," sentence)
         shuffled = random.sample(words, len(words))
 
         st.markdown(f"**Q{i+1}.** Arrange the sentence:")
@@ -143,7 +144,7 @@ elif level == "Level 3":
         user_answer = st.text_input("Type your sentence:", key=f"lvl3_{i}")
 
         def normalize(text):
-            return re.sub(r"\\s+([.,!?;])", r"\\1", text.strip())
+            return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
         if normalize(user_answer) == normalize(sentence):
             st.success("Correct")
