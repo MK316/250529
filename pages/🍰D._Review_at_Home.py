@@ -11,7 +11,6 @@ from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
-st.write("This app doesn't work yet. Currently working.")
 # ---------------------
 # 🧠 Load Data
 # ---------------------
@@ -31,7 +30,7 @@ df = load_data()
 # ---------------------
 # 🧾 Certificate Generator
 # ---------------------
-def generate_certificate(user_name):
+def generate_certificate(user_name, scores):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -46,8 +45,14 @@ def generate_certificate(user_name):
     c.setFont("Helvetica", 16)
     c.drawCentredString(width / 2, height - 200, "has successfully completed all quiz levels.")
 
+    y = height - 250
+    for level, score in scores.items():
+        c.setFont("Helvetica", 14)
+        c.drawCentredString(width / 2, y, f"{level}: {score} / 5 correct")
+        y -= 20
+
     c.setFont("Helvetica-Oblique", 12)
-    c.drawCentredString(width / 2, height - 240, "Issued by AI English Quiz App")
+    c.drawCentredString(width / 2, y - 10, "Issued by AI English Quiz App")
 
     c.save()
     buffer.seek(0)
@@ -74,15 +79,18 @@ if not st.session_state.name_entered:
 
 st.markdown(f"**👤 Student:** {st.session_state.username}")
 
-# ✅ Track completed levels
+# ✅ Track completed levels and scores
 if "completed_levels" not in st.session_state:
     st.session_state.completed_levels = set()
+if "scores" not in st.session_state:
+    st.session_state.scores = {}
 
 # ✅ Select level
 level = st.selectbox("Select a quiz level:", ["Level 1", "Level 2", "Level 3"])
 
 # ✅ Sample 5 questions from each level
 df_sample = df.sample(5, random_state=random.randint(0, 999))
+user_responses = {}
 
 # ---------------------
 # LEVEL 1
@@ -91,20 +99,19 @@ if level == "Level 1":
     st.header("🌀 Level 1: Correct or Incorrect")
     for i, row in df_sample.iterrows():
         sentence = row['Level_01']
-        focus = row['Level_01_Focus']
         meaning = row['Level_01_Meaning']
-        answer = row['Answer1']
-
         st.markdown(f"**Q{i+1}.** {sentence}")
         st.caption(f"해석: {meaning}")
-        user_answer = st.radio(f"Is the sentence grammatically correct?", ["Correct", "Incorrect"], key=f"lvl1_{i}")
-        if user_answer == answer:
-            st.success("Correct")
-        else:
-            st.error("Wrong")
+        user_responses[i] = st.radio(f"Your answer:", ["Correct", "Incorrect"], key=f"lvl1_{i}")
 
-    if st.button("✅ Mark Level 1 as Completed"):
+    if st.button("✅ Submit Level 1 Answers"):
+        score = 0
+        for i, row in df_sample.iterrows():
+            if user_responses[i] == row['Answer1']:
+                score += 1
+        st.success(f"Level 1 Score: {score} / 5")
         st.session_state.completed_levels.add("Level 1")
+        st.session_state.scores["Level 1"] = score
 
 # ---------------------
 # LEVEL 2
@@ -119,14 +126,16 @@ elif level == "Level 2":
 
         st.markdown(f"**Q{i+1}.** {cloze}")
         st.caption(f"해석: {meaning}")
-        user_answer = st.text_input("Type the missing word:", key=f"lvl2_{i}")
-        if user_answer.strip() == focus.strip():
-            st.success("Correct")
-        else:
-            st.error(f"Wrong. Answer: {focus}")
+        user_responses[i] = st.text_input("Type the missing word:", key=f"lvl2_{i}")
 
-    if st.button("✅ Mark Level 2 as Completed"):
+    if st.button("✅ Submit Level 2 Answers"):
+        score = 0
+        for i, row in df_sample.iterrows():
+            if user_responses[i].strip() == row['Level_02_Focus'].strip():
+                score += 1
+        st.success(f"Level 2 Score: {score} / 5")
         st.session_state.completed_levels.add("Level 2")
+        st.session_state.scores["Level 2"] = score
 
 # ---------------------
 # LEVEL 3
@@ -137,29 +146,29 @@ elif level == "Level 3":
         sentence = row['Level_03']
         meaning = row['Level_03_Meaning']
         words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", sentence)
-
         shuffled = random.sample(words, len(words))
 
         st.markdown(f"**Q{i+1}.** Arrange the sentence:")
         st.caption(f"해석: {meaning}")
         st.write(" → ", "  ".join(shuffled))
-        user_answer = st.text_input("Type your sentence:", key=f"lvl3_{i}")
+        user_responses[i] = st.text_input("Type your sentence:", key=f"lvl3_{i}")
 
-        def normalize(text):
-            return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
+    def normalize(text):
+        return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
-        if normalize(user_answer) == normalize(sentence):
-            st.success("Correct")
-        else:
-            st.error(f"Wrong. Answer: {sentence}")
-
-    if st.button("✅ Mark Level 3 as Completed"):
+    if st.button("✅ Submit Level 3 Answers"):
+        score = 0
+        for i, row in df_sample.iterrows():
+            if normalize(user_responses[i]) == normalize(row['Level_03']):
+                score += 1
+        st.success(f"Level 3 Score: {score} / 5")
         st.session_state.completed_levels.add("Level 3")
+        st.session_state.scores["Level 3"] = score
 
 # ---------------------
 # 🎉 Certificate Download
 # ---------------------
 if {"Level 1", "Level 2", "Level 3"}.issubset(st.session_state.completed_levels):
     st.success("🎉 All levels completed!")
-    cert_file = generate_certificate(st.session_state.username)
+    cert_file = generate_certificate(st.session_state.username, st.session_state.scores)
     st.download_button("📄 Download Certificate", cert_file, file_name="certificate.pdf")
