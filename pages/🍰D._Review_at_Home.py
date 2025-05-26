@@ -88,9 +88,15 @@ if "scores" not in st.session_state:
 # ✅ Select level
 level = st.selectbox("Select a quiz level:", ["Level 1", "Level 2", "Level 3"])
 
-# ✅ Sample 5 questions from each level
-df_sample = df.sample(5, random_state=random.randint(0, 999))
+# ✅ Sample 5 questions from each level (only once per level)
+if "sampled_questions" not in st.session_state:
+    st.session_state.sampled_questions = {}
+
+if level not in st.session_state.sampled_questions:
+    st.session_state.sampled_questions[level] = df.sample(5, random_state=random.randint(0, 999))
+
 user_responses = {}
+df_sample = st.session_state.sampled_questions[level]
 
 # ---------------------
 # LEVEL 1
@@ -126,7 +132,7 @@ elif level == "Level 2":
 
         st.markdown(f"**Q{i+1}.** {cloze}")
         st.caption(f"해석: {meaning}")
-        user_responses[i] = st.text_input("Type the missing word:", key=f"lvl2_{i}")
+        user_responses[i] = st.text_input("Type the missing word:", key=f"lvl2_{level}_{i}")
 
     if st.button("✅ Submit Level 2 Answers"):
         score = 0
