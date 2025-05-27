@@ -136,8 +136,19 @@ if level == "Level 1":
 # ---------------------
 elif level == "Level 2":
     st.header("🌀 Level 2: Fill in the Relative Pronoun")
+
+    def make_cloze(sentence, focus):
+        if "," in focus:
+            parts = [f.strip() for f in focus.split(",")]
+            for part in parts:
+                # Replace only the first match of each part (even if preceded by punctuation)
+                sentence = re.sub(rf"(\W)?\b{re.escape(part)}\b", lambda m: f"{m.group(1) if m.group(1) else ''}_____", sentence, 1)
+        else:
+            sentence = re.sub(rf"\b{re.escape(focus.strip())}\b", "_____", sentence, 1)
+        return sentence
+
     for i, row in df_sample.iterrows():
-        sentence = re.sub(rf"\b{re.escape(row['Level_02_Focus'])}\b", "_____", row['Level_02'], 1)
+        sentence = make_cloze(row['Level_02'], row['Level_02_Focus'])
         options = [opt.strip() for opt in row["Level_02_Options"].split(",")]
         st.markdown(f"**Q{i+1}.** {sentence}")
         st.caption(f"해석: {row['Level_02_Meaning']}")
@@ -152,6 +163,7 @@ elif level == "Level 2":
         st.success(f"Level 2 Score: {score} / 5")
         st.session_state.completed_levels.add("Level 2")
         st.session_state.scores["Level 2"] = score
+
 
 # ---------------------
 # LEVEL 3
