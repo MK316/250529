@@ -124,9 +124,14 @@ with level2:
 
     def generate_options(correct):
         base = ['that', 'which', 'who', 'where']
-        correct_clean = correct.replace(" ", "")
-        if "," in correct:
-            parts = [p.strip() for p in correct.split(",")]
+        parts = [p.strip() for p in correct.split(",")]
+    
+        if len(parts) == 1:
+            # Only one correct answer → return 3 distractors + 1 correct
+            distractors = [x for x in base if x != parts[0]]
+            return random.sample(distractors, 3) + [parts[0]]
+        else:
+            # Two correct answers → treat as a combo
             correct_combo = ", ".join(parts)
             distractors = []
             while len(distractors) < 3:
@@ -134,9 +139,7 @@ with level2:
                 if combo != correct_combo and combo not in distractors:
                     distractors.append(combo)
             return random.sample(distractors + [correct_combo], 4)
-        else:
-            distractors = [x for x in base if x != correct]
-            return random.sample(distractors, 3) + [correct]
+
 
     if "tab2_index" not in st.session_state:
         st.session_state.tab2_index = 0
