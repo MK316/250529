@@ -182,44 +182,39 @@ with level3:
         st.session_state.tab3_shuffled = []
         st.session_state.tab3_trigger = False
 
-    if "tab3_trigger" not in st.session_state:
-        st.session_state.tab3_trigger = False
-
     st.caption(f"🔢 진행 상황: {st.session_state.tab3_index + 1} / {len(df)} 문장")
 
     row = df.iloc[st.session_state.tab3_index]
     answer = row['Level_03']
     meaning = row['Level_03_Meaning']
 
+    # ✅ Tokenizer that preserves "wasn't", "Here's", etc.
+    def tokenize(text):
+        return re.findall(r"\b\w+(?:['’]\w+)?\b|[.,!?;]", text)
+
     if not st.session_state.tab3_shuffled:
-        # Tokenize with support for splitting wasn't → was + n't
-        words = re.findall(r"\b\w+(?=n't)\b|n't|\b\w+'\w+\b|\w+|[.,!?;]", answer)
+        words = tokenize(answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
 
-        
     st.markdown("---")
-
     st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
     st.caption("🐾 해석: " + meaning)
+
     words = st.session_state.tab3_shuffled
     for i in range(0, len(words), 5):
         row_words = words[i:i+5]
-        cols = st.columns(5)
+        cols = st.columns(len(row_words))
         for j, word in enumerate(row_words):
             if word not in st.session_state.tab3_selected:
-                if cols[j].button(word, key=f"word_{i+j}"):
+                if cols[j].button(word, key=f"word_{i+j}_{st.session_state.tab3_index}"):
                     st.session_state.tab3_selected.append(word)
-                    st.session_state.tab3_trigger = True
+                    st.rerun()
 
-    # 🔧 단어 선택 취소 버튼
+    # 🔧 단어 선택 취소
     if st.session_state.tab3_selected:
         if st.button("↩️ 마지막 선택 취소"):
             st.session_state.tab3_selected.pop()
             st.rerun()
-
-    if st.session_state.tab3_trigger:
-        st.session_state.tab3_trigger = False
-        st.rerun()
 
     st.markdown("**문장 조립:**")
 
@@ -240,14 +235,14 @@ with level3:
     def normalize(text):
         return re.sub(r"\s+([.,!?;])", r"\1", text.strip())
 
-    # ✅ Check answer
+    # ✅ 정답 확인
     if st.button("정답 확인", key="check3"):
         if normalize(user_input) == normalize(answer):
             st.success("🎉 정답입니다!")
         else:
             st.error("❌ 틀렸어요. 다시 시도해 보세요.")
             st.info(f"👉 정답: {answer}")
-    
+
     # ✅ 다음 문장
     if st.button("다음 문장", key="next3"):
         st.session_state.tab3_index = (st.session_state.tab3_index + 1) % len(df)
