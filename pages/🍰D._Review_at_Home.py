@@ -120,7 +120,7 @@ df_sample = st.session_state.sampled_questions[level]
 # LEVEL 1
 # ---------------------
 if level == "Level 1":
-    st.header("🌀 Level 1: Correct or Incorrect")
+    st.header("🌀 Level 1: 다음 문장이 맞을까요 틀릴까요?")
     for i, row in df_sample.iterrows():
         st.markdown(f"**Q{i+1}.** {row['Level_01']}")
         st.caption(f"해석: {row['Level_01_Meaning']}")
@@ -135,7 +135,7 @@ if level == "Level 1":
 # LEVEL 2
 # ---------------------
 elif level == "Level 2":
-    st.header("🌀 Level 2: Fill in the Relative Pronoun")
+    st.header("🌀 Level 2: 관계대명사 넣기")
 
     def make_cloze(sentence, focus):
         if "," in focus:
@@ -169,7 +169,7 @@ elif level == "Level 2":
 # LEVEL 3
 # ---------------------
 elif level == "Level 3":
-    st.header("🌀 Level 3: Word Order Quiz")
+    st.header("🌀 Level 3: 단어 순서로 문장 만들기")
 
     def tokenize(sentence):
         return re.findall(r"\b\w+(?:['’]\w+)?\b|[.,!?;]", sentence)
