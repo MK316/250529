@@ -12,7 +12,7 @@ import base64
 # ---------------------
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data03.csv"
+    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data04.csv"
     df = pd.read_csv(url)
     df = df.dropna(subset=[
         "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
@@ -106,6 +106,7 @@ with level1:
 # ✏️ Level 2: 관계대명사 빈칸 채우기
 # -------------------------------
 with level2:
+    import re
     st.subheader("🐸 관계대명사 빈칸 채우기 (Level 2)")
 
     def make_cloze(sentence, focus):
@@ -123,14 +124,16 @@ with level2:
 
     def generate_options(correct):
         base = ['that', 'which', 'who', 'where']
+        correct_clean = correct.replace(" ", "")
         if "," in correct:
-            correct = ", ".join([c.strip() for c in correct.split(",")])
+            parts = [p.strip() for p in correct.split(",")]
+            correct_combo = ", ".join(parts)
             distractors = []
             while len(distractors) < 3:
-                combo = ", ".join(random.choices(base, k=2))
-                if combo != correct and combo not in distractors:
+                combo = ", ".join(random.sample(base, 2))
+                if combo != correct_combo and combo not in distractors:
                     distractors.append(combo)
-            return random.sample(distractors + [correct], 4)
+            return random.sample(distractors + [correct_combo], 4)
         else:
             distractors = [x for x in base if x != correct]
             return random.sample(distractors, 3) + [correct]
@@ -145,12 +148,12 @@ with level2:
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
 
     if not st.session_state.tab2_options:
-        st.session_state.tab2_options = generate_options(row['Level_02_Focus'])
+        st.session_state.tab2_options = generate_options(row['Level_02_Answer'])
 
     options = st.session_state.tab2_options
 
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
-    
+
     import streamlit.components.v1 as components
     components.html(f"""
         <div style='font-size:20px; font-family:sans-serif; line-height:1.6em;'>
@@ -167,11 +170,14 @@ with level2:
         st.session_state.tab2_feedback = True
 
     if st.session_state.tab2_feedback:
-        if st.session_state.tab2_user_answer.replace(" ", "") == row['Level_02_Focus'].replace(" ", ""):
+        correct_answers = [ans.strip() for ans in str(row['Level_02_Answer']).split(",")]
+        user_clean = st.session_state.tab2_user_answer.strip()
+
+        if user_clean in correct_answers:
             st.success("🎉 정답입니다!")
             st.balloons()
         else:
-            st.error(f"❌ 정답은: {row['Level_02_Focus']}")
+            st.error(f"❌ 정답은: {row['Level_02_Answer']}")
 
     if st.button("다음 문장", key="next2"):
         st.session_state.tab2_index = (st.session_state.tab2_index + 1) % len(df)
