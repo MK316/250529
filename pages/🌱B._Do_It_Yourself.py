@@ -12,7 +12,7 @@ import base64
 # ---------------------
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data04.csv"
+    url = "https://raw.githubusercontent.com/MK316/250529/refs/heads/main/data/data05.csv"
     df = pd.read_csv(url)
     df = df.dropna(subset=[
         "Level_01", "Answer1", "Level_01_Correct", "Level_01_Meaning",
