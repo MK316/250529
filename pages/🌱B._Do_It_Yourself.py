@@ -192,9 +192,9 @@ with level3:
     meaning = row['Level_03_Meaning']
 
     if not st.session_state.tab3_shuffled:
-        words = re.findall(r"\w+(?:'\w+)?[.,!?;]?", answer)
+        # Split contractions like "wasn't" into "was" and "n't", and keep punctuation separate
+        words = re.findall(r"\w+(?=n't)|n't|\w+|[.,!?;]", answer)
         st.session_state.tab3_shuffled = random.sample(words, len(words))
-
     st.markdown("---")
 
     st.markdown("##### 👉 단어를 순서대로 클릭하여 의미에 맞는 문장을 완성해 보세요:")
