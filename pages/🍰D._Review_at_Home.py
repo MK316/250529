@@ -75,7 +75,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 st.markdown("### 📚 Homework Quiz: 총 15 문법 문제")
 st.caption("Level 1, 2, 3를 모두 풀면 마지막에 확인서를 다운받을 수 있습니다.")
 
-if st.button("🔄 Reset Quiz"):
+if st.button("🔄 Quiz 다시 시작하기"):
     st.session_state.clear()
     st.rerun()
 
@@ -103,7 +103,7 @@ if "completed_levels" not in st.session_state:
 if "scores" not in st.session_state:
     st.session_state.scores = {}
 
-level = st.selectbox("Select a quiz level:", ["Level 1", "Level 2", "Level 3"])
+level = st.selectbox("레벨을 선택하세요 (3레벨을 모두 끝내야 확인서를 출력할 수 있습니다.):", ["Level 1", "Level 2", "Level 3"])
 
 if "sampled_questions" not in st.session_state:
     st.session_state.sampled_questions = {}
