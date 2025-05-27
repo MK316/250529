@@ -106,54 +106,39 @@ with level1:
 # ✏️ Level 2: 관계대명사 빈칸 채우기
 # -------------------------------
 with level2:
-    import re
     st.subheader("🐸 관계대명사 빈칸 채우기 (Level 2)")
+
+    import re
+    import random
 
     def make_cloze(sentence, focus):
         if "," in focus:
             parts = [p.strip() for p in focus.split(",")]
             if len(parts) == 2:
                 part1, part2 = parts
-                # 첫 번째 단어 치환
                 sentence = re.sub(rf"\b{re.escape(part1)}\b", "<u>_____</u>", sentence, 1)
-                # 두 번째 단어는 쉼표 뒤에서만 치환
                 sentence = re.sub(rf"(,\s*){re.escape(part2)}\b", r"\1<u>_____</u>", sentence, 1)
         else:
             sentence = re.sub(rf"\b{re.escape(focus)}\b", "<u>_____</u>", sentence, 1)
         return sentence
 
-    def generate_options(correct):
-        base = ['that', 'which', 'who', 'where']
-        parts = [p.strip() for p in correct.split(",")]
-    
-        if len(parts) == 1:
-            # Only one correct answer → return 3 distractors + 1 correct
-            distractors = [x for x in base if x != parts[0]]
-            return random.sample(distractors, 3) + [parts[0]]
-        else:
-            # Two correct answers → treat as a combo
-            correct_combo = ", ".join(parts)
-            distractors = []
-            while len(distractors) < 3:
-                combo = ", ".join(random.sample(base, 2))
-                if combo != correct_combo and combo not in distractors:
-                    distractors.append(combo)
-            return random.sample(distractors + [correct_combo], 4)
+    def parse_options(option_str):
+        return [opt.strip() for opt in option_str.split(",")]
 
+    def check_answer(user, answer):
+        # Accept if the answer matches (strip space and case-insensitive)
+        correct_answers = [a.strip().lower() for a in answer.split(",")]
+        return user.strip().lower() in correct_answers
 
     if "tab2_index" not in st.session_state:
         st.session_state.tab2_index = 0
         st.session_state.tab2_feedback = False
         st.session_state.tab2_user_answer = None
-        st.session_state.tab2_options = []
 
     row = df.iloc[st.session_state.tab2_index]
     question = make_cloze(row['Level_02'], row['Level_02_Focus'])
-
-    if not st.session_state.tab2_options:
-        st.session_state.tab2_options = generate_options(row['Level_02_Answer'])
-
-    options = st.session_state.tab2_options
+    options = parse_options(row['Level_02_Options'])
+    answer = row['Level_02_Answer']
 
     st.caption(f"🔢 진행 상황: {st.session_state.tab2_index + 1} / {len(df)} 문장")
 
@@ -164,7 +149,7 @@ with level2:
         </div>
     """, height=80)
 
-    st.caption("🐾 해석: " + str(row['Level_02_Meaning']))
+    st.caption("🐾 해석: " + str(row['Level_02_Meaning']) if 'Level_02_Meaning' in row else "")
 
     user_answer = st.radio("Q: 어떤 관계대명사가 들어갈 수 있을까요?", options, key=f"tab2_radio_{st.session_state.tab2_index}")
 
@@ -173,22 +158,17 @@ with level2:
         st.session_state.tab2_feedback = True
 
     if st.session_state.tab2_feedback:
-        correct_answers = [ans.strip() for ans in str(row['Level_02_Answer']).split(",")]
-        user_clean = st.session_state.tab2_user_answer.strip()
-
-        if user_clean in correct_answers:
+        if check_answer(st.session_state.tab2_user_answer, answer):
             st.success("🎉 정답입니다!")
             st.balloons()
         else:
-            st.error(f"❌ 정답은: {row['Level_02_Answer']}")
+            st.error(f"❌ 정답은: {answer}")
 
     if st.button("다음 문장", key="next2"):
         st.session_state.tab2_index = (st.session_state.tab2_index + 1) % len(df)
         st.session_state.tab2_feedback = False
         st.session_state.tab2_user_answer = None
-        st.session_state.tab2_options = []
         st.rerun()
-
 
 # -------------------------------
 # 🐳 Level 3: 단어 배열 퀴즈
