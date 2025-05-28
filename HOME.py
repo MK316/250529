@@ -15,6 +15,6 @@ with col2:
     st.image(url2, width=250)
 
 st.markdown("---")
-st.markdown("#### App address: 250529.streamlit.app")
+st.markdown("#### 👀 App address: 250529.streamlit.app")
 
 
