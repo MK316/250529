@@ -12,7 +12,7 @@ with col1:
 
 with col2:
     url2 = "https://github.com/MK316/250529/raw/main/images/0529qr.jpg"
-    st.image(url2, width=230)
+    st.image(url2, width=240)
 
 st.markdown("---")
 st.markdown("#### 👀 App address: 250529.streamlit.app")
