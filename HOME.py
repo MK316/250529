@@ -12,6 +12,6 @@ with col1:
 
 with col2:
     url2 = "https://github.com/MK316/250529/raw/main/images/0529qr.jpg"
-    st.image(url2, caption="📲 250529.streamlit.app", width=200)
+    st.image(url2, caption="📲 250529.streamlit.app", width=250)
 
 
