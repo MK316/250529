@@ -1,4 +1,4 @@
-# 📚 Homework Quiz App with Levels and Certificate
+# 📚 Review Quiz App with Levels and Certificate
 import streamlit as st
 import pandas as pd
 import random
@@ -72,7 +72,7 @@ def generate_certificate(user_name, scores, start_time, end_time):
 # ---------------------
 # 🚀 Start App
 # ---------------------
-st.markdown("### 📚 Homework Quiz: 총 15 문법 문제")
+st.markdown("### 📚 Review Quiz: 총 15 문법 문제")
 st.caption("Level 1, 2, 3를 모두 풀면 마지막에 확인서를 다운받을 수 있습니다.")
 
 if st.button("🔄 Quiz 다시 시작하기"):
